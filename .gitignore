@@ -2,6 +2,12 @@
 .gradle/
 build/
 
+# generated files
+bin/
+gen/
+build/
+node_modules/
+
 # Local configuration file (sdk path, etc)
 local.properties
 
@@ -13,6 +19,7 @@ captures/
 .externalNativeBuild/
 .cxx/
 *.apk
+*.ap_
 output.json
 
 # IntelliJ
@@ -31,3 +38,16 @@ google-services.json
 
 # Android Profiling
 *.hprof
+
+## Ruby
+vendor/
+
+# Fastlane auto-generated files
+fastlane/report.xml
+fastlane/Preview.html
+fastlane/screenshots
+
+## npm/yarn
+node_modules/
+npm-debug.log
+yarn-error.log
