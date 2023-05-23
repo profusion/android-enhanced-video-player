@@ -1,0 +1,47 @@
+fastlane_version '2.207.0'
+
+skip_docs # avoid fastlane/README.md file generation
+
+def toKtlintReadableString(string)
+  return "\"" + string + "\""
+end
+
+def git_list_staged(filter)
+  stagedKotlinFiles =   Dir.chdir("..") do
+    `git diff --cached --diff-filter=ACMR --oneline --name-only --relative -- #{filter}`
+  end
+  return toKtlintReadableString(stagedKotlinFiles)
+end
+
+def lint_staged(action)
+  kotlinStagedFiles = git_list_staged("*.kt")
+  flags = "-PinternalKtlintGitFilter=" +  kotlinStagedFiles
+
+  gradle(
+    task: action,
+    flags: flags
+    )
+end
+
+desc 'Lint source code'
+lane :lint_staged do | options |
+  if options[:autofix] != true then
+    lint_staged('ktlintCheck')
+  else
+    lint_staged('ktlintFormat')
+  end
+end
+
+desc 'Lint code from staged files'
+lane :lint do | options |
+  if options[:autofix] != true then
+    gradle(task:'ktlintCheck')
+  else
+    gradle(task:'ktlintFormat')
+  end
+end
+
+desc 'Cleans the cache, deleting artifacts from previous builds'
+lane :clean do
+  gradle(task: 'app:clean')
+end
