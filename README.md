@@ -1,6 +1,8 @@
 # android-enhanced-video-player
 Enhanced Video Player for Android built on top of Exoplayer compliant with Android Jetpack Compose
 
+[![](https://jitpack.io/v/profusion/android-enhanced-video-player.svg)](https://jitpack.io/#profusion/android-enhanced-video-player)
+
 ## Table of Contents
 
 - [Table of Contents](#table-of-contents)
