@@ -21,7 +21,7 @@ Enhanced Video Player for Android built on top of Exoplayer compliant with Andro
 For the javascript runtime, we recommend [Node.js](https://nodejs.org/en/).
 We **strongly** suggest you to use [NVM \(Node Version Manager\)](https://github.com/nvm-sh/nvm) and also doing [this configuration](https://github.com/nvm-sh/nvm#deeper-shell-integration).
 We **strongly** suggest you to use [rbenv (Managing Ruby environment)](https://github.com/rbenv/rbenv).
-
+To ensure compatibility with [Android Gradle plugin](https://developer.android.com/studio/releases#android_gradle_plugin_and_android_studio_compatibility), it is mandatory to use Android Studio Flamingo or any subsequent version.
 
 We use yarn for dependency management, install instructions are available at https://classic.yarnpkg.com/lang/en/.
 
