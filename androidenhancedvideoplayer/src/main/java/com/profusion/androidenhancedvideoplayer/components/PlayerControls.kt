@@ -23,6 +23,7 @@ class ControlsCustomization(
     val previousIconContent: @Composable () -> Unit = { DefaultPreviousIcon() },
     val playIconContent: @Composable () -> Unit = { DefaultPlayIcon() },
     val pauseIconContent: @Composable () -> Unit = { DefaultPauseIcon() },
+    val replayIconContent: @Composable () -> Unit = { DefaultReplayIcon() },
     val nextIconContent: @Composable () -> Unit = { DefaultNextIcon() },
     val modifier: Modifier = Modifier
 )
@@ -31,6 +32,7 @@ class ControlsCustomization(
 fun PlayerControls(
     isVisible: Boolean,
     isPlaying: Boolean,
+    hasEnded: Boolean,
     onPreviousClick: () -> Unit,
     onPauseToggle: () -> Unit,
     onNextClick: () -> Unit,
@@ -56,9 +58,10 @@ fun PlayerControls(
                 onClick = onPauseToggle,
                 modifier = Modifier.testTag("PauseToggleButton")
             ) {
-                when (isPlaying) {
-                    true -> customization.pauseIconContent()
-                    false -> customization.playIconContent()
+                when {
+                    hasEnded -> customization.replayIconContent()
+                    isPlaying -> customization.pauseIconContent()
+                    else -> customization.playIconContent()
                 }
             }
             IconButton(onClick = onNextClick) {
@@ -95,6 +98,15 @@ private fun DefaultPauseIcon() {
 }
 
 @Composable
+private fun DefaultReplayIcon() {
+    Image(
+        painter = painterResource(id = R.drawable.ic_replay),
+        contentDescription = stringResource(id = R.string.controls_replay_description),
+        modifier = Modifier.testTag("ReplayIcon")
+    )
+}
+
+@Composable
 private fun DefaultNextIcon() {
     Image(
         painter = painterResource(id = R.drawable.ic_skip_next),
@@ -108,6 +120,7 @@ private fun PreviewPlayerControls() {
     PlayerControls(
         isVisible = true,
         isPlaying = true,
+        hasEnded = false,
         onPreviousClick = {},
         onPauseToggle = {},
         onNextClick = {},

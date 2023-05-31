@@ -50,6 +50,7 @@ fun EnhancedVideoPlayer(
     }
 
     var isPlaying by remember { mutableStateOf(exoPlayer.isPlaying) }
+    var hasEnded by remember { mutableStateOf(exoPlayer.playbackState == ExoPlayer.STATE_ENDED) }
     var isControlsVisible by remember { mutableStateOf(false) }
 
     DisposableEffect(context) {
@@ -57,6 +58,10 @@ fun EnhancedVideoPlayer(
             override fun onIsPlayingChanged(value: Boolean) {
                 isPlaying = value
                 super.onIsPlayingChanged(value)
+            }
+            override fun onPlaybackStateChanged(state: Int) {
+                hasEnded = state == ExoPlayer.STATE_ENDED
+                super.onPlaybackStateChanged(state)
             }
         }
         exoPlayer.addListener(listener)
@@ -75,11 +80,13 @@ fun EnhancedVideoPlayer(
     PlayerControls(
         isVisible = isControlsVisible,
         isPlaying = isPlaying,
+        hasEnded = hasEnded,
         onPreviousClick = exoPlayer::seekToPrevious,
         onNextClick = exoPlayer::seekToNext,
-        onPauseToggle = when (isPlaying) {
-            true -> exoPlayer::pause
-            false -> exoPlayer::play
+        onPauseToggle = when {
+            hasEnded -> exoPlayer::seekToDefaultPosition
+            isPlaying -> exoPlayer::pause
+            else -> exoPlayer::play
         },
         customization = controlsCustomization
     )
