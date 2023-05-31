@@ -15,6 +15,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.tooling.preview.Preview
 import com.profusion.androidenhancedvideoplayer.R
 
 class ControlsCustomization(
@@ -91,5 +92,18 @@ private fun DefaultNextIcon() {
     Image(
         painter = painterResource(id = R.drawable.ic_skip_next),
         contentDescription = stringResource(R.string.controls_next_description)
+    )
+}
+
+@Preview(showBackground = true)
+@Composable
+private fun PreviewPlayerControls() {
+    PlayerControls(
+        isVisible = true,
+        isPlaying = true,
+        onPreviousClick = {},
+        onPauseToggle = {},
+        onNextClick = {},
+        customization = ControlsCustomization()
     )
 }
