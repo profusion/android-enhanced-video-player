@@ -2,7 +2,7 @@ package com.profusion.androidenhancedvideoplayer.components
 
 import android.net.Uri
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.remember
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.viewinterop.AndroidView
 import androidx.media3.common.MediaItem
@@ -26,19 +26,19 @@ fun EnhancedVideoPlayer(
 ) {
     val context = LocalContext.current
     val mainPackagePath = "$MAIN_PACKAGE_PATH_PREFIX${context.packageName}/"
-    val exoPlayer = ExoPlayer.Builder(context).build()
-    LaunchedEffect(Unit) {
-        exoPlayer.apply {
-            setMediaItem(
-                MediaItem.fromUri(
-                    Uri.parse(mainPackagePath + resourceId.toString())
+    val exoPlayer = remember {
+        ExoPlayer.Builder(context)
+            .build().apply {
+                setMediaItem(
+                    MediaItem.fromUri(
+                        Uri.parse(mainPackagePath + resourceId.toString())
+                    )
                 )
-            )
-            volume = if (soundOff) 0f else 1f
-            repeatMode = if (alwaysRepeat) Player.REPEAT_MODE_ALL else Player.REPEAT_MODE_OFF
-            playWhenReady = playImmediately
-            prepare()
-        }
+                volume = if (soundOff) 0f else 1f
+                repeatMode = if (alwaysRepeat) Player.REPEAT_MODE_ALL else Player.REPEAT_MODE_OFF
+                playWhenReady = playImmediately
+                prepare()
+            }
     }
 
     AndroidView(
