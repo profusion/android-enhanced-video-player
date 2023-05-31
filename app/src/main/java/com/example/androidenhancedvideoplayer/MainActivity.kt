@@ -12,7 +12,8 @@ class MainActivity : ComponentActivity() {
         setContent {
             AndroidEnhancedVideoPlayerTheme {
                 EnhancedVideoPlayer(
-                    resourceId = R.raw.login_screen_background
+                    resourceId = R.raw.login_screen_background,
+                    alwaysRepeat = false
                 )
             }
         }

@@ -19,6 +19,7 @@ class PlayerControlsTest {
             PlayerControls(
                 isVisible = false,
                 isPlaying = false,
+                hasEnded = false,
                 onPreviousClick = {},
                 onPauseToggle = {},
                 onNextClick = {},
@@ -35,6 +36,7 @@ class PlayerControlsTest {
             PlayerControls(
                 isVisible = true,
                 isPlaying = false,
+                hasEnded = false,
                 onPreviousClick = {},
                 onPauseToggle = {},
                 onNextClick = {},
@@ -51,6 +53,7 @@ class PlayerControlsTest {
             PlayerControls(
                 isVisible = true,
                 isPlaying = false,
+                hasEnded = false,
                 onPreviousClick = {},
                 onPauseToggle = {},
                 onNextClick = {},
@@ -60,6 +63,7 @@ class PlayerControlsTest {
 
         composeTestRule.onNodeWithTag("PlayIcon", useUnmergedTree = true).assertIsDisplayed()
         composeTestRule.onNodeWithTag("PauseIcon", useUnmergedTree = true).assertDoesNotExist()
+        composeTestRule.onNodeWithTag("ReplayIcon", useUnmergedTree = true).assertDoesNotExist()
     }
 
     @Test
@@ -68,6 +72,7 @@ class PlayerControlsTest {
             PlayerControls(
                 isVisible = true,
                 isPlaying = true,
+                hasEnded = false,
                 onPreviousClick = {},
                 onPauseToggle = {},
                 onNextClick = {},
@@ -77,6 +82,7 @@ class PlayerControlsTest {
 
         composeTestRule.onNodeWithTag("PauseIcon", useUnmergedTree = true).assertIsDisplayed()
         composeTestRule.onNodeWithTag("PlayIcon", useUnmergedTree = true).assertDoesNotExist()
+        composeTestRule.onNodeWithTag("ReplayIcon", useUnmergedTree = true).assertDoesNotExist()
     }
 
     @Test
@@ -86,6 +92,7 @@ class PlayerControlsTest {
             PlayerControls(
                 isVisible = true,
                 isPlaying = isPlaying,
+                hasEnded = false,
                 onPreviousClick = {},
                 onPauseToggle = { isPlaying = !isPlaying },
                 onNextClick = {},
@@ -100,5 +107,39 @@ class PlayerControlsTest {
 
         composeTestRule.onNodeWithTag("PlayIcon", useUnmergedTree = true).assertDoesNotExist()
         composeTestRule.onNodeWithTag("PauseIcon", useUnmergedTree = true).assertIsDisplayed()
+    }
+
+    @Test
+    fun playerControls_WhenHasEndedIsFalseShouldNotShowReplayIcon() {
+        composeTestRule.setContent {
+            PlayerControls(
+                isVisible = true,
+                isPlaying = false,
+                hasEnded = false,
+                onPreviousClick = {},
+                onPauseToggle = {},
+                onNextClick = {},
+                customization = ControlsCustomization()
+            )
+        }
+
+        composeTestRule.onNodeWithTag("ReplayIcon", useUnmergedTree = true).assertDoesNotExist()
+    }
+
+    @Test
+    fun playerControls_WhenHasEndedIsTrueShouldShowReplayIcon() {
+        composeTestRule.setContent {
+            PlayerControls(
+                isVisible = true,
+                isPlaying = false,
+                hasEnded = true,
+                onPreviousClick = {},
+                onPauseToggle = {},
+                onNextClick = {},
+                customization = ControlsCustomization()
+            )
+        }
+
+        composeTestRule.onNodeWithTag("ReplayIcon", useUnmergedTree = true).assertIsDisplayed()
     }
 }

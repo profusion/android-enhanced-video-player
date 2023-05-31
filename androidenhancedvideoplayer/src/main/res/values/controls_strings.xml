@@ -3,4 +3,5 @@
     <string name="controls_pause_description">Pause</string>
     <string name="controls_play_description">Play</string>
     <string name="controls_previous_description">Previous</string>
+    <string name="controls_replay_description">Replay</string>
 </resources>
