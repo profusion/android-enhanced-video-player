@@ -1,4 +1,6 @@
 <resources>
+    <string name="controls_fast_backward_description">Voltar</string>
+    <string name="controls_fast_foward_description">Avançar</string>
     <string name="controls_next_description">Próximo</string>
     <string name="controls_pause_description">Pausar</string>
     <string name="controls_play_description">Reproduzir</string>
