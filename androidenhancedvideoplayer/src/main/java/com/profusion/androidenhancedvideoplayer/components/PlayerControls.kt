@@ -85,7 +85,9 @@ fun PlayerControls(
             ) {
                 IconButton(
                     onClick = onFullScreenToggle,
-                    modifier = Modifier.align(Alignment.CenterEnd)
+                    modifier = Modifier
+                        .align(Alignment.CenterEnd)
+                        .testTag("FullScreenToggleButton")
                 ) {
                     when (isFullScreen) {
                         true -> customization.exitFullScreenIconContent()
