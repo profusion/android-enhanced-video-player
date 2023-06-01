@@ -13,6 +13,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
@@ -38,7 +39,8 @@ fun PlayerControls(
     AnimatedVisibility(
         visible = isVisible,
         enter = fadeIn(),
-        exit = fadeOut()
+        exit = fadeOut(),
+        modifier = Modifier.testTag("PlayerControlsParent")
     ) {
         Row(
             horizontalArrangement = Arrangement.SpaceEvenly,
@@ -50,7 +52,10 @@ fun PlayerControls(
             IconButton(onClick = onPreviousClick) {
                 customization.previousIconContent()
             }
-            IconButton(onClick = onPauseToggle) {
+            IconButton(
+                onClick = onPauseToggle,
+                modifier = Modifier.testTag("PauseToggleButton")
+            ) {
                 when (isPlaying) {
                     true -> customization.pauseIconContent()
                     false -> customization.playIconContent()
@@ -75,7 +80,8 @@ private fun DefaultPreviousIcon() {
 private fun DefaultPlayIcon() {
     Image(
         painter = painterResource(id = R.drawable.ic_play),
-        contentDescription = stringResource(id = R.string.controls_play_description)
+        contentDescription = stringResource(id = R.string.controls_play_description),
+        modifier = Modifier.testTag("PlayIcon")
     )
 }
 
@@ -83,7 +89,8 @@ private fun DefaultPlayIcon() {
 private fun DefaultPauseIcon() {
     Image(
         painter = painterResource(id = R.drawable.ic_pause),
-        contentDescription = stringResource(id = R.string.controls_pause_description)
+        contentDescription = stringResource(id = R.string.controls_pause_description),
+        modifier = Modifier.testTag("PauseIcon")
     )
 }
 

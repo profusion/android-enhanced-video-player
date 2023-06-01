@@ -12,6 +12,8 @@ android {
         minSdk 26
         targetSdk 33
 
+        testApplicationId = "com.profusion.androidenhancedvideoplayer.test"
+
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
         consumerProguardFiles "consumer-rules.pro"
     }
