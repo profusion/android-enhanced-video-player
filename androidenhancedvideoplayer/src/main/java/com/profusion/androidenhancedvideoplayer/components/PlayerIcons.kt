@@ -52,3 +52,21 @@ fun ReplayIcon() {
         modifier = Modifier.testTag("ReplayIcon")
     )
 }
+
+@Composable
+fun FullScreenIcon() {
+    Image(
+        painter = painterResource(id = R.drawable.ic_fullscreen),
+        contentDescription = stringResource(R.string.controls_fullscreen_description),
+        modifier = Modifier.testTag("FullScreenIcon")
+    )
+}
+
+@Composable
+fun ExitFullScreenIcon() {
+    Image(
+        painter = painterResource(id = R.drawable.ic_exit_fullscreen),
+        contentDescription = stringResource(R.string.controls_exit_fullscreen_description),
+        modifier = Modifier.testTag("ExitFullScreenIcon")
+    )
+}
