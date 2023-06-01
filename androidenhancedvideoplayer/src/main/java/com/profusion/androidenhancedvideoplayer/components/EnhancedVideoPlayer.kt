@@ -1,5 +1,6 @@
 package com.profusion.androidenhancedvideoplayer.components
 
+import android.content.res.Configuration.ORIENTATION_LANDSCAPE
 import android.net.Uri
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.interaction.MutableInteractionSource
@@ -11,6 +12,7 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.viewinterop.AndroidView
@@ -20,6 +22,8 @@ import androidx.media3.common.util.UnstableApi
 import androidx.media3.exoplayer.ExoPlayer
 import androidx.media3.ui.AspectRatioFrameLayout
 import androidx.media3.ui.PlayerView
+import com.profusion.androidenhancedvideoplayer.utils.setLandscape
+import com.profusion.androidenhancedvideoplayer.utils.setPortrait
 
 private const val MAIN_PACKAGE_PATH_PREFIX = "android.resource://"
 
@@ -33,6 +37,8 @@ fun EnhancedVideoPlayer(
     controlsCustomization: ControlsCustomization = ControlsCustomization()
 ) {
     val context = LocalContext.current
+    val configuration = LocalConfiguration.current
+
     val mainPackagePath = "$MAIN_PACKAGE_PATH_PREFIX${context.packageName}/"
     val exoPlayer = remember {
         ExoPlayer.Builder(context)
@@ -52,6 +58,7 @@ fun EnhancedVideoPlayer(
     var isPlaying by remember { mutableStateOf(exoPlayer.isPlaying) }
     var hasEnded by remember { mutableStateOf(exoPlayer.playbackState == ExoPlayer.STATE_ENDED) }
     var isControlsVisible by remember { mutableStateOf(false) }
+    val isFullScreen = configuration.orientation == ORIENTATION_LANDSCAPE
 
     DisposableEffect(context) {
         val listener = object : Player.Listener {
@@ -80,6 +87,7 @@ fun EnhancedVideoPlayer(
     PlayerControls(
         isVisible = isControlsVisible,
         isPlaying = isPlaying,
+        isFullScreen = isFullScreen,
         hasEnded = hasEnded,
         onPreviousClick = exoPlayer::seekToPrevious,
         onNextClick = exoPlayer::seekToNext,
@@ -87,6 +95,12 @@ fun EnhancedVideoPlayer(
             hasEnded -> exoPlayer::seekToDefaultPosition
             isPlaying -> exoPlayer::pause
             else -> exoPlayer::play
+        },
+        onFullScreenToggle = {
+            when (isFullScreen) {
+                true -> context.setPortrait()
+                false -> context.setLandscape()
+            }
         },
         customization = controlsCustomization
     )
