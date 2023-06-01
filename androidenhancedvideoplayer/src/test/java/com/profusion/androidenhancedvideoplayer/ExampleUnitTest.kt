@@ -1,4 +1,4 @@
-package com.profusion.androidenhancedvideoplayer
+package com.profusion.androidenhancedvideoplayer.test
 
 import junit.framework.TestCase.assertEquals
 import org.junit.Test
