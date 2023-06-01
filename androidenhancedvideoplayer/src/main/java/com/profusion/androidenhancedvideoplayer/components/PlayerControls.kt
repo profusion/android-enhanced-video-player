@@ -6,7 +6,9 @@ import androidx.compose.animation.fadeOut
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.material3.IconButton
 import androidx.compose.runtime.Composable
@@ -38,41 +40,83 @@ fun PlayerControls(
     onNextClick: () -> Unit,
     customization: ControlsCustomization
 ) {
-    AnimatedVisibility(
-        visible = isVisible,
-        enter = fadeIn(),
-        exit = fadeOut(),
-        modifier = Modifier.testTag("PlayerControlsParent")
-    ) {
-        Row(
-            horizontalArrangement = Arrangement.SpaceEvenly,
-            verticalAlignment = Alignment.CenterVertically,
-            modifier = customization.modifier
-                .background(Color.Black.copy(alpha = 0.6f))
-                .fillMaxSize()
+    SeekForwardRewindLayout {
+        AnimatedVisibility(
+            visible = isVisible,
+            enter = fadeIn(),
+            exit = fadeOut(),
+            modifier = Modifier.testTag("PlayerControlsParent")
         ) {
-            IconButton(onClick = onPreviousClick) {
-                customization.previousIconContent()
-            }
-            IconButton(
-                onClick = onPauseToggle,
-                modifier = Modifier.testTag("PauseToggleButton")
+            Row(
+                horizontalArrangement = Arrangement.SpaceEvenly,
+                modifier = customization.modifier
+                    .background(Color.Black.copy(alpha = 0.6f))
+                    .fillMaxSize()
             ) {
-                when {
-                    hasEnded -> customization.replayIconContent()
-                    isPlaying -> customization.pauseIconContent()
-                    else -> customization.playIconContent()
+                IconButton(onClick = onPreviousClick) {
+                    customization.previousIconContent()
                 }
-            }
-            IconButton(onClick = onNextClick) {
-                customization.nextIconContent()
+                IconButton(
+                    onClick = onPauseToggle,
+                    modifier = Modifier.testTag("PauseToggleButton")
+                ) {
+                    when {
+                        hasEnded -> customization.replayIconContent()
+                        isPlaying -> customization.pauseIconContent()
+                        else -> customization.playIconContent()
+                    }
+                }
+                IconButton(onClick = onNextClick) {
+                    customization.nextIconContent()
+                }
             }
         }
     }
 }
 
 @Composable
-private fun DefaultPreviousIcon() {
+fun SeekForwardRewindLayout(
+    modifier: Modifier = Modifier,
+    content: @Composable () -> Unit
+) {
+    Box(
+        contentAlignment = Alignment.CenterStart,
+        modifier = modifier.fillMaxSize()
+    ) {
+        Row(modifier = Modifier.fillMaxSize()) {
+            Box(
+                modifier = Modifier
+                    .weight(1f)
+                    .fillMaxHeight()
+            )
+            Box(
+                modifier = Modifier
+                    .weight(1f)
+                    .fillMaxHeight()
+            )
+        }
+        content()
+    }
+}
+
+@Composable
+fun DefaultSeekFowardIcon() {
+    Image(
+        painter = painterResource(id = R.drawable.ic_fast_forward),
+        contentDescription = stringResource(id = R.string.controls_fast_foward_description)
+    )
+}
+
+@Composable
+fun DefaultSeekBackwardIcon() {
+    Image(
+        painter = painterResource(id = R.drawable.ic_fast_backward),
+        contentDescription = stringResource(id = R.string.controls_fast_backward_description)
+    )
+}
+
+@Composable
+fun DefaultPreviousIcon() {
     Image(
         painter = painterResource(id = R.drawable.ic_skip_previous),
         contentDescription = stringResource(id = R.string.controls_previous_description)
