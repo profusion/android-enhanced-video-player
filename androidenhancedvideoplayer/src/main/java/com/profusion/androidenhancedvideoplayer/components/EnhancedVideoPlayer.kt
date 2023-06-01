@@ -31,7 +31,7 @@ private const val MAIN_PACKAGE_PATH_PREFIX = "android.resource://"
 fun EnhancedVideoPlayer(
     resourceId: Int,
     alwaysRepeat: Boolean = true,
-    fullScreen: Boolean = true,
+    expandContent: Boolean = true,
     playImmediately: Boolean = true,
     soundOff: Boolean = true,
     controlsCustomization: ControlsCustomization = ControlsCustomization()
@@ -80,7 +80,7 @@ fun EnhancedVideoPlayer(
 
     VideoPlayer(
         exoPlayer = exoPlayer,
-        fullScreen = fullScreen,
+        expandContent = expandContent,
         onPlayerClick = { isControlsVisible = !isControlsVisible }
     )
 
@@ -110,7 +110,7 @@ fun EnhancedVideoPlayer(
 @Composable
 private fun VideoPlayer(
     exoPlayer: ExoPlayer,
-    fullScreen: Boolean,
+    expandContent: Boolean,
     onPlayerClick: () -> Unit
 ) {
     Box(
@@ -127,7 +127,7 @@ private fun VideoPlayer(
                 PlayerView(factoryContext).apply {
                     player = exoPlayer
                     useController = false
-                    resizeMode = if (fullScreen) {
+                    resizeMode = if (expandContent) {
                         AspectRatioFrameLayout.RESIZE_MODE_ZOOM
                     } else {
                         AspectRatioFrameLayout.RESIZE_MODE_FIT
