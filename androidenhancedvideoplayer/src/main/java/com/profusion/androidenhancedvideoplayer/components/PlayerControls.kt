@@ -3,7 +3,6 @@ package com.profusion.androidenhancedvideoplayer.components
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.fadeIn
 import androidx.compose.animation.fadeOut
-import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Row
@@ -14,17 +13,14 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.testTag
-import androidx.compose.ui.res.painterResource
-import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
-import com.profusion.androidenhancedvideoplayer.R
 
 class ControlsCustomization(
-    val previousIconContent: @Composable () -> Unit = { DefaultPreviousIcon() },
-    val playIconContent: @Composable () -> Unit = { DefaultPlayIcon() },
-    val pauseIconContent: @Composable () -> Unit = { DefaultPauseIcon() },
-    val replayIconContent: @Composable () -> Unit = { DefaultReplayIcon() },
-    val nextIconContent: @Composable () -> Unit = { DefaultNextIcon() },
+    val previousIconContent: @Composable () -> Unit = { PreviousIcon() },
+    val playIconContent: @Composable () -> Unit = { PlayIcon() },
+    val pauseIconContent: @Composable () -> Unit = { PauseIcon() },
+    val replayIconContent: @Composable () -> Unit = { ReplayIcon() },
+    val nextIconContent: @Composable () -> Unit = { NextIcon() },
     val modifier: Modifier = Modifier
 )
 
@@ -69,49 +65,6 @@ fun PlayerControls(
             }
         }
     }
-}
-
-@Composable
-private fun DefaultPreviousIcon() {
-    Image(
-        painter = painterResource(id = R.drawable.ic_skip_previous),
-        contentDescription = stringResource(id = R.string.controls_previous_description)
-    )
-}
-
-@Composable
-private fun DefaultPlayIcon() {
-    Image(
-        painter = painterResource(id = R.drawable.ic_play),
-        contentDescription = stringResource(id = R.string.controls_play_description),
-        modifier = Modifier.testTag("PlayIcon")
-    )
-}
-
-@Composable
-private fun DefaultPauseIcon() {
-    Image(
-        painter = painterResource(id = R.drawable.ic_pause),
-        contentDescription = stringResource(id = R.string.controls_pause_description),
-        modifier = Modifier.testTag("PauseIcon")
-    )
-}
-
-@Composable
-private fun DefaultReplayIcon() {
-    Image(
-        painter = painterResource(id = R.drawable.ic_replay),
-        contentDescription = stringResource(id = R.string.controls_replay_description),
-        modifier = Modifier.testTag("ReplayIcon")
-    )
-}
-
-@Composable
-private fun DefaultNextIcon() {
-    Image(
-        painter = painterResource(id = R.drawable.ic_skip_next),
-        contentDescription = stringResource(R.string.controls_next_description)
-    )
 }
 
 @Preview(showBackground = true)
