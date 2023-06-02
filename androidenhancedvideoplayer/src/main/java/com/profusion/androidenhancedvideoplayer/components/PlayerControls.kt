@@ -41,13 +41,14 @@ fun PlayerControls(
     onPauseToggle: () -> Unit,
     onNextClick: () -> Unit,
     onFullScreenToggle: () -> Unit,
-    customization: ControlsCustomization
+    customization: ControlsCustomization,
+    modifier: Modifier = Modifier
 ) {
     AnimatedVisibility(
         visible = isVisible,
         enter = fadeIn(),
         exit = fadeOut(),
-        modifier = Modifier.testTag("PlayerControlsParent")
+        modifier = modifier.testTag("PlayerControlsParent")
     ) {
         Column(
             modifier = customization.modifier
