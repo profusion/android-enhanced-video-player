@@ -13,7 +13,7 @@ class MainActivity : ComponentActivity() {
             AndroidEnhancedVideoPlayerTheme {
                 EnhancedVideoPlayer(
                     resourceId = R.raw.login_screen_background,
-                    alwaysRepeat = false
+                    alwaysRepeat = true
                 )
             }
         }

@@ -1,6 +1,7 @@
 package com.profusion.androidenhancedvideoplayer.components
 
 import android.net.Uri
+import android.util.Log
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.layout.Box
@@ -9,6 +10,7 @@ import androidx.compose.runtime.DisposableEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
@@ -16,11 +18,15 @@ import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.viewinterop.AndroidView
 import androidx.media3.common.MediaItem
 import androidx.media3.common.Player
+import androidx.media3.common.Timeline
 import androidx.media3.common.util.UnstableApi
 import androidx.media3.exoplayer.ExoPlayer
 import androidx.media3.ui.AspectRatioFrameLayout
 import androidx.media3.ui.PlayerView
+import kotlinx.coroutines.delay
+import kotlinx.coroutines.launch
 
+private const val DEFAULT_TIME_TO_SEEK_MS = 10 * 1000L // 10 seconds
 private const val MAIN_PACKAGE_PATH_PREFIX = "android.resource://"
 
 @Composable
@@ -30,7 +36,7 @@ fun EnhancedVideoPlayer(
     fullScreen: Boolean = true,
     playImmediately: Boolean = true,
     soundOff: Boolean = true,
-    controlsCustomization: ControlsCustomization = ControlsCustomization()
+    controlsCustomization: ControlsCustomization = ControlsCustomization(),
 ) {
     val context = LocalContext.current
     val mainPackagePath = "$MAIN_PACKAGE_PATH_PREFIX${context.packageName}/"
@@ -39,8 +45,8 @@ fun EnhancedVideoPlayer(
             .build().apply {
                 setMediaItem(
                     MediaItem.fromUri(
-                        Uri.parse(mainPackagePath + resourceId.toString())
-                    )
+                        Uri.parse(mainPackagePath + resourceId.toString()),
+                    ),
                 )
                 volume = if (soundOff) 0f else 1f
                 repeatMode = if (alwaysRepeat) Player.REPEAT_MODE_ALL else Player.REPEAT_MODE_OFF
@@ -49,9 +55,23 @@ fun EnhancedVideoPlayer(
             }
     }
 
+    val scope = rememberCoroutineScope()
+
     var isPlaying by remember { mutableStateOf(exoPlayer.isPlaying) }
     var hasEnded by remember { mutableStateOf(exoPlayer.playbackState == ExoPlayer.STATE_ENDED) }
     var isControlsVisible by remember { mutableStateOf(false) }
+    var shouldShowForwardIcon by remember { mutableStateOf(false) }
+
+    fun onSeekFoward(tapCount: Int) {
+        if (!exoPlayer.currentTimeline.isEmpty) {
+            shouldShowForwardIcon = true
+            scope.launch {
+                delay(50)
+                shouldShowForwardIcon = false
+            }
+            exoPlayer.seekTo(exoPlayer.currentPosition + (DEFAULT_TIME_TO_SEEK_MS * tapCount))
+        }
+    }
 
     DisposableEffect(context) {
         val listener = object : Player.Listener {
@@ -74,13 +94,14 @@ fun EnhancedVideoPlayer(
     VideoPlayer(
         exoPlayer = exoPlayer,
         fullScreen = fullScreen,
-        onPlayerClick = { isControlsVisible = !isControlsVisible }
+        onPlayerClick = { isControlsVisible = !isControlsVisible },
     )
 
     PlayerControls(
         isVisible = isControlsVisible,
         isPlaying = isPlaying,
         hasEnded = hasEnded,
+        onPlayerClick = { isControlsVisible = !isControlsVisible },
         onPreviousClick = exoPlayer::seekToPrevious,
         onNextClick = exoPlayer::seekToNext,
         onPauseToggle = when {
@@ -88,7 +109,11 @@ fun EnhancedVideoPlayer(
             isPlaying -> exoPlayer::pause
             else -> exoPlayer::play
         },
-        customization = controlsCustomization
+        customization = controlsCustomization,
+        onSeekForward = { tapCount -> onSeekFoward(tapCount) },
+        onSeekBackward = { tapCount -> Log.d("SEEK", "onSeekBackward Called") },
+        shouldShowBackwardIcon = false,
+        shouldShowForwardIcon = shouldShowForwardIcon
     )
 }
 

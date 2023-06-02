@@ -80,9 +80,9 @@ fun createLazyJob(
     onJobComplete: () -> Unit
 ): Job {
     return scope.launch(start = CoroutineStart.LAZY) {
-        delay(400)
+        delay(1500)
         val currentTimeStamp = System.currentTimeMillis()
-        if (currentTimeStamp - lastTimeStampOfUniqueTap > 200) {
+        if (currentTimeStamp - lastTimeStampOfUniqueTap > 300) {
             onJobComplete()
         }
     }
