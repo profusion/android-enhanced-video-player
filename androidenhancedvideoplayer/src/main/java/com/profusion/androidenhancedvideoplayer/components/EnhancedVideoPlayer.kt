@@ -27,6 +27,7 @@ import com.profusion.androidenhancedvideoplayer.utils.setPortrait
 
 private const val MAIN_PACKAGE_PATH_PREFIX = "android.resource://"
 
+@androidx.annotation.OptIn(UnstableApi::class)
 @Composable
 fun EnhancedVideoPlayer(
     resourceId: Int,
@@ -78,47 +79,12 @@ fun EnhancedVideoPlayer(
         }
     }
 
-    VideoPlayer(
-        exoPlayer = exoPlayer,
-        expandContent = expandContent,
-        onPlayerClick = { isControlsVisible = !isControlsVisible }
-    )
-
-    PlayerControls(
-        isVisible = isControlsVisible,
-        isPlaying = isPlaying,
-        isFullScreen = isFullScreen,
-        hasEnded = hasEnded,
-        onPreviousClick = exoPlayer::seekToPrevious,
-        onNextClick = exoPlayer::seekToNext,
-        onPauseToggle = when {
-            hasEnded -> exoPlayer::seekToDefaultPosition
-            isPlaying -> exoPlayer::pause
-            else -> exoPlayer::play
-        },
-        onFullScreenToggle = {
-            when (isFullScreen) {
-                true -> context.setPortrait()
-                false -> context.setLandscape()
-            }
-        },
-        customization = controlsCustomization
-    )
-}
-
-@androidx.annotation.OptIn(UnstableApi::class)
-@Composable
-private fun VideoPlayer(
-    exoPlayer: ExoPlayer,
-    expandContent: Boolean,
-    onPlayerClick: () -> Unit
-) {
     Box(
         modifier = Modifier
             .clickable(
                 indication = null,
                 interactionSource = remember { MutableInteractionSource() },
-                onClick = onPlayerClick
+                onClick = { isControlsVisible = !isControlsVisible }
             )
             .testTag("VideoPlayerParent")
     ) {
@@ -134,6 +100,27 @@ private fun VideoPlayer(
                     }
                 }
             }
+        )
+        PlayerControls(
+            isVisible = isControlsVisible,
+            isPlaying = isPlaying,
+            isFullScreen = isFullScreen,
+            hasEnded = hasEnded,
+            onPreviousClick = exoPlayer::seekToPrevious,
+            onNextClick = exoPlayer::seekToNext,
+            onPauseToggle = when {
+                hasEnded -> exoPlayer::seekToDefaultPosition
+                isPlaying -> exoPlayer::pause
+                else -> exoPlayer::play
+            },
+            onFullScreenToggle = {
+                when (isFullScreen) {
+                    true -> context.setPortrait()
+                    false -> context.setLandscape()
+                }
+            },
+            customization = controlsCustomization,
+            modifier = Modifier.matchParentSize()
         )
     }
 }
