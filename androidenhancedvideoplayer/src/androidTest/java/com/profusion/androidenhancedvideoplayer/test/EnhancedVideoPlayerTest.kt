@@ -26,6 +26,7 @@ class EnhancedVideoPlayerTest {
             .assertIsDisplayed()
             .performClick()
 
-        composeTestRule.onNodeWithTag("PlayerControlsParent").assertIsDisplayed()
+        composeTestRule.onNodeWithTag("PlayerControlsParent", useUnmergedTree = true)
+            .assertIsDisplayed()
     }
 }
