@@ -5,8 +5,8 @@ import androidx.compose.ui.test.assertIsDisplayed
 import androidx.compose.ui.test.junit4.createComposeRule
 import androidx.compose.ui.test.onNodeWithTag
 import androidx.compose.ui.test.performClick
-import com.profusion.androidenhancedvideoplayer.components.ControlsCustomization
-import com.profusion.androidenhancedvideoplayer.components.PlayerControls
+import com.profusion.androidenhancedvideoplayer.components.playerOverlay.ControlsCustomization
+import com.profusion.androidenhancedvideoplayer.components.playerOverlay.PlayerControls
 import org.junit.Rule
 import org.junit.Test
 

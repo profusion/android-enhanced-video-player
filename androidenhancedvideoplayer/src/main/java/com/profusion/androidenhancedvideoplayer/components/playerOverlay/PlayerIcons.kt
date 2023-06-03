@@ -1,4 +1,4 @@
-package com.profusion.androidenhancedvideoplayer.components
+package com.profusion.androidenhancedvideoplayer.components.playerOverlay
 
 import androidx.compose.foundation.Image
 import androidx.compose.runtime.Composable

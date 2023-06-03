@@ -22,6 +22,8 @@ import androidx.media3.common.util.UnstableApi
 import androidx.media3.exoplayer.ExoPlayer
 import androidx.media3.ui.AspectRatioFrameLayout
 import androidx.media3.ui.PlayerView
+import com.profusion.androidenhancedvideoplayer.components.playerOverlay.ControlsCustomization
+import com.profusion.androidenhancedvideoplayer.components.playerOverlay.PlayerControls
 import com.profusion.androidenhancedvideoplayer.utils.setLandscape
 import com.profusion.androidenhancedvideoplayer.utils.setPortrait
 
@@ -120,7 +122,7 @@ fun EnhancedVideoPlayer(
                 }
             },
             customization = controlsCustomization,
-            modifier = Modifier.matchParentSize()
+            modifier = Modifier.matchParentSize().testTag("PlayerControlsParent")
         )
     }
 }
