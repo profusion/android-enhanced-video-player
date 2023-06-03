@@ -6,4 +6,5 @@
     <string name="controls_play_description">Play</string>
     <string name="controls_previous_description">Previous</string>
     <string name="controls_replay_description">Replay</string>
+    <string name="controls_settings_description">Settings</string>
 </resources>

@@ -70,3 +70,28 @@ fun ExitFullScreenIcon() {
         modifier = Modifier.testTag("ExitFullScreenIcon")
     )
 }
+
+@Composable
+fun SettingsIcon() {
+    Image(
+        painter = painterResource(id = R.drawable.ic_settings),
+        contentDescription = stringResource(R.string.controls_settings_description)
+    )
+}
+
+@Composable
+fun SpeedIcon() {
+    Image(
+        painter = painterResource(id = R.drawable.ic_speed),
+        contentDescription = stringResource(R.string.settings_speed_description)
+    )
+}
+
+@Composable
+fun CheckIcon(modifier: Modifier = Modifier) {
+    Image(
+        painter = painterResource(id = R.drawable.ic_check),
+        contentDescription = stringResource(R.string.settings_check_description),
+        modifier = modifier
+    )
+}

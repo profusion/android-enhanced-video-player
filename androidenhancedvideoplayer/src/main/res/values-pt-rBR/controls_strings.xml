@@ -6,4 +6,5 @@
     <string name="controls_play_description">Reproduzir</string>
     <string name="controls_previous_description">Anterior</string>
     <string name="controls_replay_description">Repetir</string>
+    <string name="controls_settings_description">Configurações</string>
 </resources>
