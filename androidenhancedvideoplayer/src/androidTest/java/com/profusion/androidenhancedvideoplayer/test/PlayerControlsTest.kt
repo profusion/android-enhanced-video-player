@@ -143,4 +143,15 @@ class PlayerControlsTest {
         composeTestRule.onNodeWithTag("FullScreenIcon", useUnmergedTree = true).assertDoesNotExist()
         composeTestRule.onNodeWithTag("ExitFullScreenIcon", useUnmergedTree = true).assertIsDisplayed()
     }
+
+    @Test
+    fun playerControls_WhenPressedSettingsButtonShouldShowSettings() {
+        composeTestRule.setContent {
+            defaultPlayerControls()
+        }
+
+        composeTestRule.onNodeWithTag("SettingsControlsParent").assertDoesNotExist()
+        composeTestRule.onNodeWithTag("SettingsButton").performClick()
+        composeTestRule.onNodeWithTag("SettingsControlsParent").assertIsDisplayed()
+    }
 }
