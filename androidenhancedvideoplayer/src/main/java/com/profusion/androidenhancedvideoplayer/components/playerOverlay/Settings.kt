@@ -15,6 +15,7 @@ import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import com.profusion.androidenhancedvideoplayer.R
@@ -40,7 +41,7 @@ fun Settings(
     ModalBottomSheet(
         onDismissRequest = onDismissRequest,
         sheetState = sheetState,
-        modifier = customization.modifier
+        modifier = customization.modifier.testTag("SettingsControlsParent")
     ) {
         SettingsSelector(
             label = stringResource(id = R.string.settings_speed),
@@ -70,13 +71,16 @@ private fun <T>SettingsSelector(
         headlineContent = { Text(label) },
         leadingContent = icon,
         trailingContent = { Text(value.toString()) },
-        modifier = modifier.clickable(onClick = { isSelectorOpen = true })
+        modifier = modifier
+            .clickable(onClick = { isSelectorOpen = true })
+            .testTag("${label}SettingsButton")
     )
 
     if (isSelectorOpen) {
         ModalBottomSheet(
             onDismissRequest = { isSelectorOpen = false },
-            sheetState = sheetState
+            sheetState = sheetState,
+            modifier = Modifier.testTag("${label}SettingsSelector")
         ) {
             items.forEach { item ->
                 ListItem(
