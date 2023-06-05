@@ -10,8 +10,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.testTag
-import androidx.compose.ui.unit.dp
-
+import com.profusion.androidenhancedvideoplayer.styling.Dimensions
 
 @Composable
 fun BottomControls(
@@ -24,7 +23,7 @@ fun BottomControls(
         modifier = modifier
             .fillMaxWidth()
             .height(IntrinsicSize.Min)
-            .absolutePadding(4.dp)
+            .absolutePadding(Dimensions.large)
     ) {
         IconButton(
             onClick = onFullScreenToggle,
