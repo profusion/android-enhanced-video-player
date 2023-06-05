@@ -1,6 +1,6 @@
 package com.profusion.androidenhancedvideoplayer.components
 
-import android.content.res.Configuration.ORIENTATION_LANDSCAPE
+import android.content.res.Configuration
 import android.net.Uri
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.interaction.MutableInteractionSource
@@ -45,17 +45,42 @@ fun EnhancedVideoPlayer(
     settingsControlsCustomization: SettingsControlsCustomization = SettingsControlsCustomization()
 ) {
     val context = LocalContext.current
-    val configuration = LocalConfiguration.current
-
     val mainPackagePath = "$MAIN_PACKAGE_PATH_PREFIX${context.packageName}/"
+
+    EnhancedVideoPlayer(
+        mediaItem = MediaItem.fromUri(
+            Uri.parse(mainPackagePath + resourceId.toString())
+        ),
+        alwaysRepeat = alwaysRepeat,
+        expandContent = expandContent,
+        playImmediately = playImmediately,
+        soundOff = soundOff,
+        currentTimeTickInMs = currentTimeTickInMs,
+        controlsCustomization = controlsCustomization,
+        settingsControlsCustomization = settingsControlsCustomization
+    )
+}
+
+@androidx.annotation.OptIn(UnstableApi::class)
+@Composable
+fun EnhancedVideoPlayer(
+    mediaItem: MediaItem,
+    alwaysRepeat: Boolean = true,
+    expandContent: Boolean = true,
+    playImmediately: Boolean = true,
+    soundOff: Boolean = true,
+    currentTimeTickInMs: Long = CURRENT_TIME_TICK_IN_MS,
+    controlsCustomization: ControlsCustomization = ControlsCustomization(),
+    settingsControlsCustomization: SettingsControlsCustomization = SettingsControlsCustomization()
+) {
+    val context = LocalContext.current
+
+    val orientation = LocalConfiguration.current.orientation
+
     val exoPlayer = remember {
         ExoPlayer.Builder(context)
             .build().apply {
-                setMediaItem(
-                    MediaItem.fromUri(
-                        Uri.parse(mainPackagePath + resourceId.toString())
-                    )
-                )
+                setMediaItem(mediaItem)
                 volume = if (soundOff) 0f else 1f
                 repeatMode = if (alwaysRepeat) Player.REPEAT_MODE_ALL else Player.REPEAT_MODE_OFF
                 playWhenReady = playImmediately
@@ -72,8 +97,7 @@ fun EnhancedVideoPlayer(
     var title by remember {
         mutableStateOf(exoPlayer.currentMediaItem?.mediaMetadata?.displayTitle?.toString())
     }
-
-    val isFullScreen = configuration.orientation == ORIENTATION_LANDSCAPE
+    val isFullScreen = orientation == Configuration.ORIENTATION_LANDSCAPE
 
     DisposableEffect(context) {
         val listener = object : Player.Listener {
