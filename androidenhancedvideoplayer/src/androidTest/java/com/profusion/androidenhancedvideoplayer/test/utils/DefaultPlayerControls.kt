@@ -5,6 +5,7 @@ import com.profusion.androidenhancedvideoplayer.components.playerOverlay.Setting
 
 @Composable
 fun DefaultPlayerControls(
+    title: String? = null,
     isVisible: Boolean = true,
     isPlaying: Boolean = false,
     isFullScreen: Boolean = false,
@@ -19,6 +20,7 @@ fun DefaultPlayerControls(
     settingsControlsCustomization: SettingsControlsCustomization = SettingsControlsCustomization()
 ) {
     PlayerControls(
+        title = title,
         isVisible = isVisible,
         isPlaying = isPlaying,
         isFullScreen = isFullScreen,
