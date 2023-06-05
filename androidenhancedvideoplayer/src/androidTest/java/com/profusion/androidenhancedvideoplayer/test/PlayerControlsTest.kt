@@ -1,13 +1,10 @@
 package com.profusion.androidenhancedvideoplayer.test
 
-import androidx.compose.runtime.Composable
+import DefaultPlayerControls
 import androidx.compose.ui.test.assertIsDisplayed
 import androidx.compose.ui.test.junit4.createComposeRule
 import androidx.compose.ui.test.onNodeWithTag
 import androidx.compose.ui.test.performClick
-import com.profusion.androidenhancedvideoplayer.components.playerOverlay.ControlsCustomization
-import com.profusion.androidenhancedvideoplayer.components.playerOverlay.PlayerControls
-import com.profusion.androidenhancedvideoplayer.components.playerOverlay.SettingsControlsCustomization
 import org.junit.Rule
 import org.junit.Test
 
@@ -15,41 +12,10 @@ class PlayerControlsTest {
     @get:Rule
     val composeTestRule = createComposeRule()
 
-    @Composable
-    fun defaultPlayerControls(
-        isVisible: Boolean = true,
-        isPlaying: Boolean = false,
-        isFullScreen: Boolean = false,
-        hasEnded: Boolean = false,
-        speed: Float = 1f,
-        onPreviousClick: () -> Unit = {},
-        onPauseToggle: () -> Unit = {},
-        onNextClick: () -> Unit = {},
-        onFullScreenToggle: () -> Unit = {},
-        onSpeedSelected: (Float) -> Unit = {},
-        customization: ControlsCustomization = ControlsCustomization(),
-        settingsControlsCustomization: SettingsControlsCustomization = SettingsControlsCustomization()
-    ) {
-        PlayerControls(
-            isVisible = isVisible,
-            isPlaying = isPlaying,
-            isFullScreen = isFullScreen,
-            hasEnded = hasEnded,
-            speed = speed,
-            onPreviousClick = onPreviousClick,
-            onPauseToggle = onPauseToggle,
-            onNextClick = onNextClick,
-            onFullScreenToggle = onFullScreenToggle,
-            onSpeedSelected = onSpeedSelected,
-            customization = customization,
-            settingsControlsCustomization = settingsControlsCustomization
-        )
-    }
-
     @Test
     fun playerControls_WhenIsVisibleIsFalseShouldNotShowControls() {
         composeTestRule.setContent {
-            defaultPlayerControls(
+            DefaultPlayerControls(
                 isVisible = false
             )
         }
@@ -60,7 +26,7 @@ class PlayerControlsTest {
     @Test
     fun playerControls_WhenIsVisibleIsTrueShouldShowControls() {
         composeTestRule.setContent {
-            defaultPlayerControls(
+            DefaultPlayerControls(
                 isVisible = true
             )
         }
@@ -71,7 +37,7 @@ class PlayerControlsTest {
     @Test
     fun playerControls_WhenIsPlayingIsFalseShouldShowPlayIcon() {
         composeTestRule.setContent {
-            defaultPlayerControls(
+            DefaultPlayerControls(
                 isPlaying = false
             )
         }
@@ -84,7 +50,7 @@ class PlayerControlsTest {
     @Test
     fun playerControls_WhenIsPlayingIsTrueShouldShowPauseIcon() {
         composeTestRule.setContent {
-            defaultPlayerControls(
+            DefaultPlayerControls(
                 isPlaying = true
             )
         }
@@ -98,7 +64,7 @@ class PlayerControlsTest {
     fun playerControls_WhenPauseToggleIsCalledShouldChangeTheIcon() {
         var isPlaying = true
         composeTestRule.setContent {
-            defaultPlayerControls(
+            DefaultPlayerControls(
                 isPlaying = isPlaying,
                 onPauseToggle = { isPlaying = !isPlaying }
             )
@@ -116,7 +82,7 @@ class PlayerControlsTest {
     @Test
     fun playerControls_WhenHasEndedIsFalseShouldNotShowReplayIcon() {
         composeTestRule.setContent {
-            defaultPlayerControls(
+            DefaultPlayerControls(
                 hasEnded = false
             )
         }
@@ -127,7 +93,7 @@ class PlayerControlsTest {
     @Test
     fun playerControls_WhenHasEndedIsTrueShouldShowReplayIcon() {
         composeTestRule.setContent {
-            defaultPlayerControls(
+            DefaultPlayerControls(
                 hasEnded = true
             )
         }
@@ -138,7 +104,7 @@ class PlayerControlsTest {
     @Test
     fun playerControls_WhenIsFullScreenIsFalseShouldShowFullScreenIcon() {
         composeTestRule.setContent {
-            defaultPlayerControls(
+            DefaultPlayerControls(
                 isFullScreen = false
             )
         }
@@ -150,7 +116,7 @@ class PlayerControlsTest {
     @Test
     fun playerControls_WhenIsFullScreenIsTrueShouldShowExitFullScreenIcon() {
         composeTestRule.setContent {
-            defaultPlayerControls(
+            DefaultPlayerControls(
                 isFullScreen = true
             )
         }
@@ -163,7 +129,7 @@ class PlayerControlsTest {
     fun playerControls_WhenFullScreenToggleIsCalledShouldChangeTheIcon() {
         var isFullScreen = true
         composeTestRule.setContent {
-            defaultPlayerControls(
+            DefaultPlayerControls(
                 isFullScreen = isFullScreen,
                 onFullScreenToggle = { isFullScreen = !isFullScreen }
             )
