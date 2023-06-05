@@ -18,6 +18,7 @@ class ControlsCustomization(
 
 @Composable
 fun PlayerControls(
+    title: String? = null,
     isVisible: Boolean,
     isPlaying: Boolean,
     isFullScreen: Boolean,
@@ -35,7 +36,11 @@ fun PlayerControls(
     PlayerControlsScaffold(
         modifier = modifier.testTag("PlayerControlsParent"),
         isVisible = isVisible,
-        topContent = { /* TODO */ },
+        topContent = {
+            TopControls(
+                title = title
+            )
+        },
         bottomContent = {
             BottomControls(
                 isFullScreen = isFullScreen,
@@ -63,6 +68,7 @@ fun PlayerControls(
 @Composable
 private fun PreviewPlayerControls() {
     PlayerControls(
+        title = "Really long title that should be truncated",
         isVisible = true,
         isPlaying = true,
         hasEnded = false,
