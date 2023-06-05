@@ -17,6 +17,7 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.viewinterop.AndroidView
 import androidx.media3.common.MediaItem
+import androidx.media3.common.PlaybackParameters
 import androidx.media3.common.Player
 import androidx.media3.common.util.UnstableApi
 import androidx.media3.exoplayer.ExoPlayer
@@ -24,6 +25,7 @@ import androidx.media3.ui.AspectRatioFrameLayout
 import androidx.media3.ui.PlayerView
 import com.profusion.androidenhancedvideoplayer.components.playerOverlay.ControlsCustomization
 import com.profusion.androidenhancedvideoplayer.components.playerOverlay.PlayerControls
+import com.profusion.androidenhancedvideoplayer.components.playerOverlay.SettingsControlsCustomization
 import com.profusion.androidenhancedvideoplayer.utils.setLandscape
 import com.profusion.androidenhancedvideoplayer.utils.setPortrait
 
@@ -37,7 +39,8 @@ fun EnhancedVideoPlayer(
     expandContent: Boolean = true,
     playImmediately: Boolean = true,
     soundOff: Boolean = true,
-    controlsCustomization: ControlsCustomization = ControlsCustomization()
+    controlsCustomization: ControlsCustomization = ControlsCustomization(),
+    settingsControlsCustomization: SettingsControlsCustomization = SettingsControlsCustomization()
 ) {
     val context = LocalContext.current
     val configuration = LocalConfiguration.current
@@ -61,6 +64,8 @@ fun EnhancedVideoPlayer(
     var isPlaying by remember { mutableStateOf(exoPlayer.isPlaying) }
     var hasEnded by remember { mutableStateOf(exoPlayer.playbackState == ExoPlayer.STATE_ENDED) }
     var isControlsVisible by remember { mutableStateOf(false) }
+    var speed by remember { mutableStateOf(exoPlayer.playbackParameters.speed) }
+
     val isFullScreen = configuration.orientation == ORIENTATION_LANDSCAPE
 
     DisposableEffect(context) {
@@ -72,6 +77,10 @@ fun EnhancedVideoPlayer(
             override fun onPlaybackStateChanged(state: Int) {
                 hasEnded = state == ExoPlayer.STATE_ENDED
                 super.onPlaybackStateChanged(state)
+            }
+            override fun onPlaybackParametersChanged(playbackParameters: PlaybackParameters) {
+                speed = playbackParameters.speed
+                super.onPlaybackParametersChanged(playbackParameters)
             }
         }
         exoPlayer.addListener(listener)
@@ -108,6 +117,7 @@ fun EnhancedVideoPlayer(
             isPlaying = isPlaying,
             isFullScreen = isFullScreen,
             hasEnded = hasEnded,
+            speed = speed,
             onPreviousClick = exoPlayer::seekToPrevious,
             onNextClick = exoPlayer::seekToNext,
             onPauseToggle = when {
@@ -121,8 +131,12 @@ fun EnhancedVideoPlayer(
                     false -> context.setLandscape()
                 }
             },
+            onSpeedSelected = exoPlayer::setPlaybackSpeed,
             customization = controlsCustomization,
-            modifier = Modifier.matchParentSize().testTag("PlayerControlsParent")
+            settingsControlsCustomization = settingsControlsCustomization,
+            modifier = Modifier
+                .matchParentSize()
+                .testTag("PlayerControlsParent")
         )
     }
 }
