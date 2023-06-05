@@ -12,7 +12,8 @@ class ControlsCustomization(
     val replayIconContent: @Composable () -> Unit = { ReplayIcon() },
     val nextIconContent: @Composable () -> Unit = { NextIcon() },
     val fullScreenIconContent: @Composable () -> Unit = { FullScreenIcon() },
-    val exitFullScreenIconContent: @Composable () -> Unit = { ExitFullScreenIcon() }
+    val exitFullScreenIconContent: @Composable () -> Unit = { ExitFullScreenIcon() },
+    val settingsIconContent: @Composable () -> Unit = { SettingsIcon() }
 )
 
 @Composable
@@ -21,11 +22,14 @@ fun PlayerControls(
     isPlaying: Boolean,
     isFullScreen: Boolean,
     hasEnded: Boolean,
+    speed: Float,
     onPreviousClick: () -> Unit,
     onPauseToggle: () -> Unit,
     onNextClick: () -> Unit,
     onFullScreenToggle: () -> Unit,
+    onSpeedSelected: (Float) -> Unit,
     customization: ControlsCustomization,
+    settingsControlsCustomization: SettingsControlsCustomization,
     modifier: Modifier = Modifier
 ) {
     PlayerControlsScaffold(
@@ -35,8 +39,11 @@ fun PlayerControls(
         bottomContent = {
             BottomControls(
                 isFullScreen = isFullScreen,
+                speed = speed,
                 onFullScreenToggle = onFullScreenToggle,
-                customization = customization
+                onSpeedSelected = onSpeedSelected,
+                customization = customization,
+                settingsControlsCustomization = settingsControlsCustomization
             )
         }
     ) {
@@ -60,10 +67,13 @@ private fun PreviewPlayerControls() {
         isPlaying = true,
         hasEnded = false,
         isFullScreen = false,
+        speed = 1f,
         onPreviousClick = {},
         onPauseToggle = {},
         onNextClick = {},
         onFullScreenToggle = {},
-        customization = ControlsCustomization()
+        onSpeedSelected = {},
+        customization = ControlsCustomization(),
+        settingsControlsCustomization = SettingsControlsCustomization()
     )
 }
