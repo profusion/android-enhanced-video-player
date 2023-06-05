@@ -67,6 +67,9 @@ fun EnhancedVideoPlayer(
     var speed by remember { mutableStateOf(exoPlayer.playbackParameters.speed) }
 
     val isFullScreen = configuration.orientation == ORIENTATION_LANDSCAPE
+    var title by remember {
+        mutableStateOf(exoPlayer.currentMediaItem?.mediaMetadata?.displayTitle?.toString())
+    }
 
     DisposableEffect(context) {
         val listener = object : Player.Listener {
@@ -81,6 +84,10 @@ fun EnhancedVideoPlayer(
             override fun onPlaybackParametersChanged(playbackParameters: PlaybackParameters) {
                 speed = playbackParameters.speed
                 super.onPlaybackParametersChanged(playbackParameters)
+            }
+            override fun onMediaItemTransition(mediaItem: MediaItem?, reason: Int) {
+                title = mediaItem?.mediaMetadata?.displayTitle?.toString()
+                super.onMediaItemTransition(mediaItem, reason)
             }
         }
         exoPlayer.addListener(listener)
@@ -113,6 +120,7 @@ fun EnhancedVideoPlayer(
             }
         )
         PlayerControls(
+            title = title,
             isVisible = isControlsVisible,
             isPlaying = isPlaying,
             isFullScreen = isFullScreen,
