@@ -4,6 +4,7 @@ import DefaultPlayerControls
 import androidx.compose.ui.test.assertIsDisplayed
 import androidx.compose.ui.test.junit4.createComposeRule
 import androidx.compose.ui.test.onNodeWithTag
+import androidx.compose.ui.test.onNodeWithText
 import androidx.compose.ui.test.performClick
 import org.junit.Rule
 import org.junit.Test
@@ -153,5 +154,18 @@ class PlayerControlsTest {
         composeTestRule.onNodeWithTag("SettingsControlsParent").assertDoesNotExist()
         composeTestRule.onNodeWithTag("SettingsButton").performClick()
         composeTestRule.onNodeWithTag("SettingsControlsParent").assertIsDisplayed()
+    }
+
+    @Test
+    fun playerControls_WhenHasTitleShouldDisplayTitle() {
+        val title = "My Video Title"
+
+        composeTestRule.setContent {
+            DefaultPlayerControls(
+                title = title
+            )
+        }
+
+        composeTestRule.onNodeWithText(title).assertIsDisplayed()
     }
 }
