@@ -11,11 +11,14 @@ fun DefaultPlayerControls(
     isFullScreen: Boolean = false,
     hasEnded: Boolean = false,
     speed: Float = 1f,
+    videoTimer: Long = 0,
+    totalDuration: Long = 0,
     onPreviousClick: () -> Unit = {},
     onPauseToggle: () -> Unit = {},
     onNextClick: () -> Unit = {},
     onFullScreenToggle: () -> Unit = {},
     onSpeedSelected: (Float) -> Unit = {},
+    onSeekBarValueChange: (Long) -> Unit = {},
     customization: ControlsCustomization = ControlsCustomization(),
     settingsControlsCustomization: SettingsControlsCustomization = SettingsControlsCustomization()
 ) {
@@ -26,11 +29,14 @@ fun DefaultPlayerControls(
         isFullScreen = isFullScreen,
         hasEnded = hasEnded,
         speed = speed,
+        currentTime = videoTimer,
+        totalDuration = totalDuration,
         onPreviousClick = onPreviousClick,
         onPauseToggle = onPauseToggle,
         onNextClick = onNextClick,
         onFullScreenToggle = onFullScreenToggle,
         onSpeedSelected = onSpeedSelected,
+        onSeekBarValueChange = onSeekBarValueChange,
         customization = customization,
         settingsControlsCustomization = settingsControlsCustomization
     )
