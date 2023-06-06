@@ -17,7 +17,6 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.viewinterop.AndroidView
 import androidx.media3.common.MediaItem
-import androidx.media3.common.PlaybackParameters
 import androidx.media3.common.Player
 import androidx.media3.common.util.UnstableApi
 import androidx.media3.exoplayer.ExoPlayer
@@ -26,10 +25,12 @@ import androidx.media3.ui.PlayerView
 import com.profusion.androidenhancedvideoplayer.components.playerOverlay.ControlsCustomization
 import com.profusion.androidenhancedvideoplayer.components.playerOverlay.PlayerControls
 import com.profusion.androidenhancedvideoplayer.components.playerOverlay.SettingsControlsCustomization
+import com.profusion.androidenhancedvideoplayer.utils.TimeoutEffect
 import com.profusion.androidenhancedvideoplayer.utils.setLandscape
 import com.profusion.androidenhancedvideoplayer.utils.setPortrait
 
 private const val MAIN_PACKAGE_PATH_PREFIX = "android.resource://"
+private const val CURRENT_TIME_TICK_IN_MS = 50L
 
 @androidx.annotation.OptIn(UnstableApi::class)
 @Composable
@@ -39,6 +40,7 @@ fun EnhancedVideoPlayer(
     expandContent: Boolean = true,
     playImmediately: Boolean = true,
     soundOff: Boolean = true,
+    currentTimeTickInMs: Long = CURRENT_TIME_TICK_IN_MS,
     controlsCustomization: ControlsCustomization = ControlsCustomization(),
     settingsControlsCustomization: SettingsControlsCustomization = SettingsControlsCustomization()
 ) {
@@ -65,29 +67,24 @@ fun EnhancedVideoPlayer(
     var hasEnded by remember { mutableStateOf(exoPlayer.playbackState == ExoPlayer.STATE_ENDED) }
     var isControlsVisible by remember { mutableStateOf(false) }
     var speed by remember { mutableStateOf(exoPlayer.playbackParameters.speed) }
-
-    val isFullScreen = configuration.orientation == ORIENTATION_LANDSCAPE
+    var currentTime by remember { mutableStateOf(exoPlayer.contentPosition) }
+    var totalDuration by remember { mutableStateOf(exoPlayer.duration) }
     var title by remember {
         mutableStateOf(exoPlayer.currentMediaItem?.mediaMetadata?.displayTitle?.toString())
     }
 
+    val isFullScreen = configuration.orientation == ORIENTATION_LANDSCAPE
+
     DisposableEffect(context) {
         val listener = object : Player.Listener {
-            override fun onIsPlayingChanged(value: Boolean) {
-                isPlaying = value
-                super.onIsPlayingChanged(value)
-            }
-            override fun onPlaybackStateChanged(state: Int) {
-                hasEnded = state == ExoPlayer.STATE_ENDED
-                super.onPlaybackStateChanged(state)
-            }
-            override fun onPlaybackParametersChanged(playbackParameters: PlaybackParameters) {
-                speed = playbackParameters.speed
-                super.onPlaybackParametersChanged(playbackParameters)
-            }
-            override fun onMediaItemTransition(mediaItem: MediaItem?, reason: Int) {
-                title = mediaItem?.mediaMetadata?.displayTitle?.toString()
-                super.onMediaItemTransition(mediaItem, reason)
+            override fun onEvents(player: Player, events: Player.Events) {
+                isPlaying = player.isPlaying
+                hasEnded = player.playbackState == ExoPlayer.STATE_ENDED
+                speed = player.playbackParameters.speed
+                title = player.mediaMetadata.displayTitle?.toString()
+                currentTime = player.contentPosition
+                totalDuration = player.duration
+                super.onEvents(player, events)
             }
         }
         exoPlayer.addListener(listener)
@@ -95,6 +92,13 @@ fun EnhancedVideoPlayer(
         onDispose {
             exoPlayer.removeListener(listener)
         }
+    }
+
+    TimeoutEffect(
+        timeoutInMs = currentTimeTickInMs,
+        enabled = isPlaying && isControlsVisible
+    ) {
+        currentTime = exoPlayer.currentPosition
     }
 
     Box(
@@ -126,6 +130,8 @@ fun EnhancedVideoPlayer(
             isFullScreen = isFullScreen,
             hasEnded = hasEnded,
             speed = speed,
+            totalDuration = totalDuration,
+            currentTime = currentTime,
             onPreviousClick = exoPlayer::seekToPrevious,
             onNextClick = exoPlayer::seekToNext,
             onPauseToggle = when {
@@ -140,6 +146,7 @@ fun EnhancedVideoPlayer(
                 }
             },
             onSpeedSelected = exoPlayer::setPlaybackSpeed,
+            onSeekBarValueChange = exoPlayer::seekTo,
             customization = controlsCustomization,
             settingsControlsCustomization = settingsControlsCustomization,
             modifier = Modifier

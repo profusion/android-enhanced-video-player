@@ -24,11 +24,14 @@ fun PlayerControls(
     isFullScreen: Boolean,
     hasEnded: Boolean,
     speed: Float,
+    currentTime: Long,
+    totalDuration: Long,
     onPreviousClick: () -> Unit,
     onPauseToggle: () -> Unit,
     onNextClick: () -> Unit,
     onFullScreenToggle: () -> Unit,
     onSpeedSelected: (Float) -> Unit,
+    onSeekBarValueChange: (Long) -> Unit,
     customization: ControlsCustomization,
     settingsControlsCustomization: SettingsControlsCustomization,
     modifier: Modifier = Modifier
@@ -45,8 +48,11 @@ fun PlayerControls(
             BottomControls(
                 isFullScreen = isFullScreen,
                 speed = speed,
+                currentTime = currentTime,
+                totalDuration = totalDuration,
                 onFullScreenToggle = onFullScreenToggle,
                 onSpeedSelected = onSpeedSelected,
+                onSeekBarValueChange = onSeekBarValueChange,
                 customization = customization,
                 settingsControlsCustomization = settingsControlsCustomization
             )
@@ -74,11 +80,14 @@ private fun PreviewPlayerControls() {
         hasEnded = false,
         isFullScreen = false,
         speed = 1f,
+        currentTime = 0L,
+        totalDuration = 0L,
         onPreviousClick = {},
         onPauseToggle = {},
         onNextClick = {},
         onFullScreenToggle = {},
         onSpeedSelected = {},
+        onSeekBarValueChange = {},
         customization = ControlsCustomization(),
         settingsControlsCustomization = SettingsControlsCustomization()
     )
