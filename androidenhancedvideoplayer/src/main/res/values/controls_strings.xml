@@ -1,10 +1,13 @@
 <resources>
     <string name="controls_exit_fullscreen_description">Exit Fullscreen</string>
+    <string name="controls_forward_description">Forward</string>
     <string name="controls_fullscreen_description">Fullscreen</string>
     <string name="controls_next_description">Next</string>
     <string name="controls_pause_description">Pause</string>
     <string name="controls_play_description">Play</string>
     <string name="controls_previous_description">Previous</string>
     <string name="controls_replay_description">Replay</string>
+    <string name="controls_rewind_description">Rewind</string>
     <string name="controls_settings_description">Settings</string>
+    <string name="controls_time_unit">Seconds</string>
 </resources>
