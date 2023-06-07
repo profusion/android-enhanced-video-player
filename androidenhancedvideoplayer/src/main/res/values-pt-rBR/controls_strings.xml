@@ -1,10 +1,13 @@
 <resources>
     <string name="controls_exit_fullscreen_description">Sair da Tela Cheia</string>
+    <string name="controls_forward_description">Avançar</string>
     <string name="controls_fullscreen_description">Tela Cheia</string>
     <string name="controls_next_description">Próximo</string>
     <string name="controls_pause_description">Pausar</string>
     <string name="controls_play_description">Reproduzir</string>
     <string name="controls_previous_description">Anterior</string>
     <string name="controls_replay_description">Repetir</string>
+    <string name="controls_rewind_description">Retroceder</string>
     <string name="controls_settings_description">Configurações</string>
+    <string name="controls_time_unit">Segundos</string>
 </resources>
