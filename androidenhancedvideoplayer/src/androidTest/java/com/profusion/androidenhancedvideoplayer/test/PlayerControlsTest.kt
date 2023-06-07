@@ -148,7 +148,7 @@ class PlayerControlsTest {
     @Test
     fun playerControls_WhenPressedSettingsButtonShouldShowSettings() {
         composeTestRule.setContent {
-            defaultPlayerControls()
+            DefaultPlayerControls()
         }
 
         composeTestRule.onNodeWithTag("SettingsControlsParent").assertDoesNotExist()
