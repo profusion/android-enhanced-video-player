@@ -9,6 +9,7 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalConfiguration
+import androidx.core.view.WindowCompat
 import androidx.media3.common.MediaItem
 import com.example.androidenhancedvideoplayer.components.RecommendedVideosComponent
 import com.example.androidenhancedvideoplayer.ui.theme.AndroidEnhancedVideoPlayerTheme
@@ -18,6 +19,7 @@ import com.profusion.androidenhancedvideoplayer.components.playerOverlay.Setting
 
 class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
+        WindowCompat.setDecorFitsSystemWindows(window, false)
         super.onCreate(savedInstanceState)
         setContent {
             AndroidEnhancedVideoPlayerTheme {
@@ -46,7 +48,8 @@ fun VideoFromURL() {
             "https://commondatastorage.googleapis.com/" +
                 "gtv-videos-bucket/sample/ElephantsDream.mp4"
         ),
-        expandContent = false,
+        zoomToFit = false,
+        enableImmersiveMode = true,
         alwaysRepeat = false,
         settingsControlsCustomization = SettingsControlsCustomization(
             speeds = listOf(0.5f, 1f, 2f, 4f)
@@ -58,7 +61,8 @@ fun VideoFromURL() {
 fun VideoFromResources() {
     EnhancedVideoPlayer(
         resourceId = R.raw.login_screen_background,
-        expandContent = true,
+        zoomToFit = false,
+        enableImmersiveMode = true,
         alwaysRepeat = false,
         settingsControlsCustomization = SettingsControlsCustomization(
             speeds = listOf(0.5f, 1f, 2f, 4f)
