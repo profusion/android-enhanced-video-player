@@ -2,6 +2,7 @@ package com.profusion.androidenhancedvideoplayer.components
 
 import android.content.res.Configuration
 import android.net.Uri
+import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.layout.Box
@@ -11,7 +12,9 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.testTag
@@ -26,8 +29,10 @@ import com.profusion.androidenhancedvideoplayer.components.playerOverlay.Control
 import com.profusion.androidenhancedvideoplayer.components.playerOverlay.PlayerControls
 import com.profusion.androidenhancedvideoplayer.components.playerOverlay.SettingsControlsCustomization
 import com.profusion.androidenhancedvideoplayer.utils.TimeoutEffect
+import com.profusion.androidenhancedvideoplayer.utils.fillMaxSizeOnLandscape
 import com.profusion.androidenhancedvideoplayer.utils.setLandscape
 import com.profusion.androidenhancedvideoplayer.utils.setPortrait
+import com.profusion.androidenhancedvideoplayer.utils.setStatusBarVisibility
 
 private const val MAIN_PACKAGE_PATH_PREFIX = "android.resource://"
 private const val CURRENT_TIME_TICK_IN_MS = 50L
@@ -37,7 +42,8 @@ private const val CURRENT_TIME_TICK_IN_MS = 50L
 fun EnhancedVideoPlayer(
     resourceId: Int,
     alwaysRepeat: Boolean = true,
-    expandContent: Boolean = true,
+    zoomToFit: Boolean = true,
+    enableImmersiveMode: Boolean = true,
     playImmediately: Boolean = true,
     soundOff: Boolean = true,
     currentTimeTickInMs: Long = CURRENT_TIME_TICK_IN_MS,
@@ -52,7 +58,8 @@ fun EnhancedVideoPlayer(
             Uri.parse(mainPackagePath + resourceId.toString())
         ),
         alwaysRepeat = alwaysRepeat,
-        expandContent = expandContent,
+        zoomToFit = zoomToFit,
+        enableImmersiveMode = enableImmersiveMode,
         playImmediately = playImmediately,
         soundOff = soundOff,
         currentTimeTickInMs = currentTimeTickInMs,
@@ -66,7 +73,8 @@ fun EnhancedVideoPlayer(
 fun EnhancedVideoPlayer(
     mediaItem: MediaItem,
     alwaysRepeat: Boolean = true,
-    expandContent: Boolean = true,
+    zoomToFit: Boolean = true,
+    enableImmersiveMode: Boolean = true,
     playImmediately: Boolean = true,
     soundOff: Boolean = true,
     currentTimeTickInMs: Long = CURRENT_TIME_TICK_IN_MS,
@@ -98,6 +106,12 @@ fun EnhancedVideoPlayer(
         mutableStateOf(exoPlayer.currentMediaItem?.mediaMetadata?.displayTitle?.toString())
     }
     val isFullScreen = orientation == Configuration.ORIENTATION_LANDSCAPE
+
+    if (enableImmersiveMode) {
+        context.setStatusBarVisibility(
+            showStatusBar = isControlsVisible || !isFullScreen
+        )
+    }
 
     DisposableEffect(context) {
         val listener = object : Player.Listener {
@@ -132,18 +146,23 @@ fun EnhancedVideoPlayer(
                 interactionSource = remember { MutableInteractionSource() },
                 onClick = { isControlsVisible = !isControlsVisible }
             )
-            .testTag("VideoPlayerParent")
+            .background(Color.Black)
+            .fillMaxSizeOnLandscape(orientation)
+            .testTag("VideoPlayerParent"),
+        contentAlignment = Alignment.Center
     ) {
         AndroidView(
             factory = { factoryContext ->
                 PlayerView(factoryContext).apply {
                     player = exoPlayer
                     useController = false
-                    resizeMode = if (expandContent) {
-                        AspectRatioFrameLayout.RESIZE_MODE_ZOOM
-                    } else {
-                        AspectRatioFrameLayout.RESIZE_MODE_FIT
-                    }
+                }
+            },
+            update = { playerView ->
+                playerView.resizeMode = if (zoomToFit) {
+                    AspectRatioFrameLayout.RESIZE_MODE_ZOOM
+                } else {
+                    AspectRatioFrameLayout.RESIZE_MODE_FIT
                 }
             }
         )
