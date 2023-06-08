@@ -73,14 +73,22 @@ dependencies {
 }
 
 afterEvaluate {
+    def VERSION_NAME = project.properties.get("VERSION_NAME").toString()
+    def GROUP_ID = project.properties.get("GROUP").toString()
+    def ARTIFACT_ID = project.properties.get("ARTIFACT_ID").toString()
+
+    if (!VERSION_NAME || !GROUP_ID || !ARTIFACT_ID) {
+        throw new GradleException("Bad Publishing Configuration")
+    }
+
     publishing {
         publications {
             release(MavenPublication) {
                 from components.release
 
-                groupId = 'com.github.profusion'
-                artifactId = 'android-enhanced-video-player'
-                version = '1.0'
+                groupId = GROUP_ID
+                artifactId = ARTIFACT_ID
+                version = VERSION_NAME
             }
         }
     }
