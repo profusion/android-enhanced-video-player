@@ -1,0 +1,5 @@
+[*.{kt,kts}]
+ktlint_code_style=android_studio
+ij_kotlin_imports_layout=*
+ktlint_no-wildcard-imports = disabled
+
