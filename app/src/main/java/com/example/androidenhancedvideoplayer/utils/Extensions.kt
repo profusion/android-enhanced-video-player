@@ -2,7 +2,6 @@ package com.example.androidenhancedvideoplayer.utils
 
 import android.content.res.Configuration
 import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.systemBarsPadding
 import androidx.compose.ui.Modifier
 
 fun Modifier.fillMaxSizeOnLandscape(orientation: Int) =
@@ -10,5 +9,5 @@ fun Modifier.fillMaxSizeOnLandscape(orientation: Int) =
         Configuration.ORIENTATION_LANDSCAPE -> this.then(
             Modifier.fillMaxSize()
         )
-        else -> this.then(systemBarsPadding())
+        else -> this
     }

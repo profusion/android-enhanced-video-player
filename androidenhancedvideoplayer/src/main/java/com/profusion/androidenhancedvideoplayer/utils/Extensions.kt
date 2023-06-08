@@ -9,6 +9,7 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.ui.Modifier
 import androidx.core.view.WindowCompat
 import androidx.core.view.WindowInsetsCompat
+import androidx.core.view.WindowInsetsControllerCompat
 
 fun Context.findActivity(): Activity? = when (this) {
     is Activity -> this
@@ -40,6 +41,20 @@ fun Context.setStatusBarVisibility(showStatusBar: Boolean) {
             windowInsetsController.show(WindowInsetsCompat.Type.statusBars())
         } else {
             windowInsetsController.hide(WindowInsetsCompat.Type.statusBars())
+        }
+    }
+}
+
+fun Context.setNavigationBarVisibility(showNavigationBar: Boolean) {
+    val window = this.findActivity()?.window
+    window?.let {
+        val windowInsetsController = WindowCompat.getInsetsController(it, it.decorView)
+        windowInsetsController.systemBarsBehavior = WindowInsetsControllerCompat.BEHAVIOR_DEFAULT
+
+        if (showNavigationBar) {
+            windowInsetsController.show(WindowInsetsCompat.Type.navigationBars())
+        } else {
+            windowInsetsController.hide(WindowInsetsCompat.Type.navigationBars())
         }
     }
 }
