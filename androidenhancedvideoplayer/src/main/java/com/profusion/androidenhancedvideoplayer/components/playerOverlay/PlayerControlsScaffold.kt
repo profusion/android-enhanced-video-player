@@ -10,7 +10,7 @@ import androidx.compose.foundation.layout.ColumnScope
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.Color
+import com.profusion.androidenhancedvideoplayer.styling.Colors
 
 @Composable
 fun PlayerControlsScaffold(
@@ -25,7 +25,7 @@ fun PlayerControlsScaffold(
         enter = fadeIn(),
         exit = fadeOut(),
         modifier = modifier
-            .background(Color.Black.copy(alpha = 0.6f))
+            .background(Colors.controlsShadow)
     ) {
         Column(
             modifier = Modifier.fillMaxSize(),

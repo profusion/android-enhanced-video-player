@@ -13,11 +13,14 @@ class ControlsCustomization(
     val nextIconContent: @Composable () -> Unit = { NextIcon() },
     val fullScreenIconContent: @Composable () -> Unit = { FullScreenIcon() },
     val exitFullScreenIconContent: @Composable () -> Unit = { ExitFullScreenIcon() },
-    val settingsIconContent: @Composable () -> Unit = { SettingsIcon() }
+    val settingsIconContent: @Composable () -> Unit = { SettingsIcon() },
+    val forwardIconContent: @Composable (modifier: Modifier) -> Unit = { ForwardIcon(it) },
+    val rewindIconContent: @Composable (modifier: Modifier) -> Unit = { RewindIcon(it) }
 )
 
 @Composable
 fun PlayerControls(
+    modifier: Modifier = Modifier,
     title: String? = null,
     isVisible: Boolean,
     isPlaying: Boolean,
@@ -33,8 +36,7 @@ fun PlayerControls(
     onSpeedSelected: (Float) -> Unit,
     onSeekBarValueChange: (Long) -> Unit,
     customization: ControlsCustomization,
-    settingsControlsCustomization: SettingsControlsCustomization,
-    modifier: Modifier = Modifier
+    settingsControlsCustomization: SettingsControlsCustomization
 ) {
     PlayerControlsScaffold(
         modifier = modifier.testTag("PlayerControlsParent"),
