@@ -107,3 +107,23 @@ fun CheckIcon(modifier: Modifier = Modifier) {
         modifier = modifier
     )
 }
+
+@Composable
+fun ForwardIcon(modifier: Modifier = Modifier) {
+    Icon(
+        painter = painterResource(id = R.drawable.ic_forward),
+        tint = Color.White,
+        contentDescription = stringResource(R.string.controls_forward_description),
+        modifier = modifier.testTag("ForwardIcon")
+    )
+}
+
+@Composable
+fun RewindIcon(modifier: Modifier = Modifier) {
+    Icon(
+        painter = painterResource(id = R.drawable.ic_rewind),
+        tint = Color.White,
+        contentDescription = stringResource(R.string.controls_rewind_description),
+        modifier = modifier.testTag("RewindIcon")
+    )
+}

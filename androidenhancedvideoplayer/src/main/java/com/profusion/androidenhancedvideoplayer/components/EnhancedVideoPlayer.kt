@@ -2,10 +2,14 @@ package com.profusion.androidenhancedvideoplayer.components
 
 import android.content.res.Configuration
 import android.net.Uri
+import androidx.compose.animation.*
+import androidx.compose.animation.core.*
+import androidx.compose.foundation.*
 import androidx.compose.foundation.background
-import androidx.compose.foundation.clickable
-import androidx.compose.foundation.interaction.MutableInteractionSource
+import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.layout.Box
+import androidx.compose.material.*
+import androidx.compose.runtime.*
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.DisposableEffect
 import androidx.compose.runtime.getValue
@@ -14,10 +18,13 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.*
+import androidx.compose.ui.graphics.*
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.testTag
+import androidx.compose.ui.unit.*
 import androidx.compose.ui.viewinterop.AndroidView
 import androidx.media3.common.MediaItem
 import androidx.media3.common.Player
@@ -27,6 +34,7 @@ import androidx.media3.ui.AspectRatioFrameLayout
 import androidx.media3.ui.PlayerView
 import com.profusion.androidenhancedvideoplayer.components.playerOverlay.ControlsCustomization
 import com.profusion.androidenhancedvideoplayer.components.playerOverlay.PlayerControls
+import com.profusion.androidenhancedvideoplayer.components.playerOverlay.SeekHandler
 import com.profusion.androidenhancedvideoplayer.components.playerOverlay.SettingsControlsCustomization
 import com.profusion.androidenhancedvideoplayer.utils.TimeoutEffect
 import com.profusion.androidenhancedvideoplayer.utils.fillMaxSizeOnLandscape
@@ -37,6 +45,8 @@ import com.profusion.androidenhancedvideoplayer.utils.setStatusBarVisibility
 
 private const val MAIN_PACKAGE_PATH_PREFIX = "android.resource://"
 private const val CURRENT_TIME_TICK_IN_MS = 50L
+
+private const val DEFAULT_SEEK_TIME_MS = 10 * 1000L // 10 seconds
 
 @androidx.annotation.OptIn(UnstableApi::class)
 @Composable
@@ -49,7 +59,8 @@ fun EnhancedVideoPlayer(
     soundOff: Boolean = true,
     currentTimeTickInMs: Long = CURRENT_TIME_TICK_IN_MS,
     controlsCustomization: ControlsCustomization = ControlsCustomization(),
-    settingsControlsCustomization: SettingsControlsCustomization = SettingsControlsCustomization()
+    settingsControlsCustomization: SettingsControlsCustomization = SettingsControlsCustomization(),
+    transformSeekIncrementRatio: (tapCount: Int) -> Long = { it -> it * DEFAULT_SEEK_TIME_MS }
 ) {
     val context = LocalContext.current
     val mainPackagePath = "$MAIN_PACKAGE_PATH_PREFIX${context.packageName}/"
@@ -65,7 +76,8 @@ fun EnhancedVideoPlayer(
         soundOff = soundOff,
         currentTimeTickInMs = currentTimeTickInMs,
         controlsCustomization = controlsCustomization,
-        settingsControlsCustomization = settingsControlsCustomization
+        settingsControlsCustomization = settingsControlsCustomization,
+        transformSeekIncrementRatio = { transformSeekIncrementRatio(it) }
     )
 }
 
@@ -80,6 +92,7 @@ fun EnhancedVideoPlayer(
     soundOff: Boolean = true,
     currentTimeTickInMs: Long = CURRENT_TIME_TICK_IN_MS,
     controlsCustomization: ControlsCustomization = ControlsCustomization(),
+    transformSeekIncrementRatio: (tapCount: Int) -> Long = { it -> it * DEFAULT_SEEK_TIME_MS },
     settingsControlsCustomization: SettingsControlsCustomization = SettingsControlsCustomization()
 ) {
     val context = LocalContext.current
@@ -96,7 +109,6 @@ fun EnhancedVideoPlayer(
                 prepare()
             }
     }
-
     var isPlaying by remember { mutableStateOf(exoPlayer.isPlaying) }
     var hasEnded by remember { mutableStateOf(exoPlayer.playbackState == ExoPlayer.STATE_ENDED) }
     var isControlsVisible by remember { mutableStateOf(false) }
@@ -112,6 +124,10 @@ fun EnhancedVideoPlayer(
         val shouldShowSystemUi = !isFullScreen
         context.setStatusBarVisibility(shouldShowSystemUi)
         context.setNavigationBarVisibility(shouldShowSystemUi)
+    }
+
+    fun setControlsVisibility(visible: Boolean) {
+        isControlsVisible = visible
     }
 
     DisposableEffect(context) {
@@ -142,11 +158,6 @@ fun EnhancedVideoPlayer(
 
     Box(
         modifier = Modifier
-            .clickable(
-                indication = null,
-                interactionSource = remember { MutableInteractionSource() },
-                onClick = { isControlsVisible = !isControlsVisible }
-            )
             .background(Color.Black)
             .fillMaxSizeOnLandscape(orientation)
             .testTag("VideoPlayerParent"),
@@ -167,6 +178,18 @@ fun EnhancedVideoPlayer(
                 }
             }
         )
+        Box(modifier = Modifier.matchParentSize()) {
+            SeekHandler(
+                disableSeekForward = hasEnded,
+                isControlsVisible = isControlsVisible,
+                exoPlayer = exoPlayer,
+                controlsCustomization = controlsCustomization,
+                toggleControlsVisibility = { isControlsVisible = !isControlsVisible },
+                setControlsVisibility = ::setControlsVisibility,
+                transformSeekIncrementRatio = transformSeekIncrementRatio
+            )
+        }
+
         PlayerControls(
             title = title,
             isVisible = isControlsVisible,
