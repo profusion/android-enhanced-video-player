@@ -104,7 +104,7 @@ fun EnhancedVideoPlayer(
     var currentTime by remember { mutableStateOf(exoPlayer.contentPosition) }
     var totalDuration by remember { mutableStateOf(exoPlayer.duration) }
     var title by remember {
-        mutableStateOf(exoPlayer.currentMediaItem?.mediaMetadata?.displayTitle?.toString())
+        mutableStateOf(exoPlayer.currentMediaItem?.mediaMetadata?.title?.toString())
     }
     val isFullScreen = orientation == Configuration.ORIENTATION_LANDSCAPE
 
@@ -120,7 +120,7 @@ fun EnhancedVideoPlayer(
                 isPlaying = player.isPlaying
                 hasEnded = player.playbackState == ExoPlayer.STATE_ENDED
                 speed = player.playbackParameters.speed
-                title = player.mediaMetadata.displayTitle?.toString()
+                title = player.mediaMetadata.title?.toString()
                 currentTime = player.contentPosition
                 totalDuration = player.duration
                 super.onEvents(player, events)

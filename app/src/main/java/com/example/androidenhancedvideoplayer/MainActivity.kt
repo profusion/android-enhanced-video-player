@@ -35,7 +35,7 @@ class MainActivity : ComponentActivity() {
                             .fillMaxSizeOnLandscape(orientation = orientation)
                             .fillMaxWidth()
                     ) {
-                        VideoFromURL()
+                        VideoFromResources()
                     }
                     RecommendedVideosComponent()
                 }
@@ -63,7 +63,7 @@ fun VideoFromURL() {
 @Composable
 fun VideoFromResources() {
     EnhancedVideoPlayer(
-        resourceId = R.raw.login_screen_background,
+        resourceId = R.raw.spinning_earth,
         zoomToFit = false,
         enableImmersiveMode = true,
         alwaysRepeat = false,
