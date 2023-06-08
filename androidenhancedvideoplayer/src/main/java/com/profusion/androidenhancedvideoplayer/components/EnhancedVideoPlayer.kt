@@ -11,6 +11,7 @@ import androidx.compose.runtime.DisposableEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -97,16 +98,20 @@ fun EnhancedVideoPlayer(
             }
     }
 
-    var isPlaying by remember { mutableStateOf(exoPlayer.isPlaying) }
-    var hasEnded by remember { mutableStateOf(exoPlayer.playbackState == ExoPlayer.STATE_ENDED) }
-    var isControlsVisible by remember { mutableStateOf(false) }
-    var speed by remember { mutableStateOf(exoPlayer.playbackParameters.speed) }
-    var currentTime by remember { mutableStateOf(exoPlayer.contentPosition) }
-    var totalDuration by remember { mutableStateOf(exoPlayer.duration) }
-    var title by remember {
+    var isPlaying by rememberSaveable { mutableStateOf(exoPlayer.isPlaying) }
+    var hasEnded by rememberSaveable {
+        mutableStateOf(exoPlayer.playbackState == ExoPlayer.STATE_ENDED)
+    }
+    var isControlsVisible by rememberSaveable { mutableStateOf(false) }
+    var speed by rememberSaveable { mutableStateOf(exoPlayer.playbackParameters.speed) }
+    var currentTime by rememberSaveable { mutableStateOf(exoPlayer.contentPosition) }
+    var totalDuration by rememberSaveable { mutableStateOf(exoPlayer.duration) }
+    var title by rememberSaveable {
         mutableStateOf(exoPlayer.currentMediaItem?.mediaMetadata?.title?.toString())
     }
-    val isFullScreen = orientation == Configuration.ORIENTATION_LANDSCAPE
+    val isFullScreen by rememberSaveable {
+        mutableStateOf(orientation == Configuration.ORIENTATION_LANDSCAPE)
+    }
 
     if (enableImmersiveMode) {
         val shouldShowSystemUi = !isFullScreen

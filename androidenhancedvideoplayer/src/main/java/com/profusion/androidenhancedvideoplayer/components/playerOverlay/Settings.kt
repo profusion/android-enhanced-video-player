@@ -11,6 +11,7 @@ import androidx.compose.material3.rememberModalBottomSheetState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
@@ -34,21 +35,26 @@ fun Settings(
     speed: Float,
     onDismissRequest: () -> Unit,
     onSpeedSelected: (Float) -> Unit,
-    customization: SettingsControlsCustomization
+    modifier: Modifier = Modifier
 ) {
+    val speedList = rememberSaveable {
+        mutableStateOf(listOf(0.5f, 0.75f, 1.0f, 1.25f, 1.5f))
+    }
+    val onSpeedSelected = remember { mutableStateOf(onSpeedSelected) }
+    val onDismissRequest = remember { mutableStateOf(onDismissRequest) }
     val sheetState = rememberModalBottomSheetState()
 
     ModalBottomSheet(
-        onDismissRequest = onDismissRequest,
+        onDismissRequest = onDismissRequest.value,
         sheetState = sheetState,
-        modifier = customization.modifier.testTag("SettingsControlsParent")
+        modifier = modifier.testTag("SettingsControlsParent")
     ) {
         SettingsSelector(
             label = stringResource(id = R.string.settings_speed),
-            icon = customization.speedIconContent,
+            icon = { SpeedIcon() },
             value = speed,
-            items = customization.speeds,
-            onSelected = onSpeedSelected
+            items = speedList.value,
+            onSelected = onSpeedSelected.value
         )
     }
 }
@@ -115,6 +121,5 @@ private fun PreviewSettings() {
         speed = 1.0f,
         onDismissRequest = { },
         onSpeedSelected = { },
-        customization = SettingsControlsCustomization()
     )
 }

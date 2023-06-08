@@ -6,6 +6,8 @@ import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.material3.IconButton
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.testTag
@@ -15,11 +17,13 @@ fun MiddleControls(
     modifier: Modifier = Modifier,
     isPlaying: Boolean,
     hasEnded: Boolean,
-    customization: ControlsCustomization,
     onPreviousClick: () -> Unit,
     onNextClick: () -> Unit,
     onPauseToggle: () -> Unit
 ) {
+    var onPreviousClick = remember { mutableStateOf(onPreviousClick) }
+    var onNextClick = remember { mutableStateOf(onNextClick) }
+    var onPauseToggle = remember { mutableStateOf(onPauseToggle) }
     Box(
         modifier = modifier
             .fillMaxWidth(),
@@ -31,21 +35,21 @@ fun MiddleControls(
             modifier = Modifier
                 .fillMaxWidth()
         ) {
-            IconButton(onClick = onPreviousClick) {
-                customization.previousIconContent()
+            IconButton(onClick = onPreviousClick.value) {
+                PreviousIcon()
             }
             IconButton(
-                onClick = onPauseToggle,
+                onClick = onPauseToggle.value,
                 modifier = Modifier.testTag("PauseToggleButton")
             ) {
                 when {
-                    hasEnded -> customization.replayIconContent()
-                    isPlaying -> customization.pauseIconContent()
-                    else -> customization.playIconContent()
+                    hasEnded -> ReplayIcon()
+                    isPlaying -> PauseIcon()
+                    else -> PlayIcon()
                 }
             }
-            IconButton(onClick = onNextClick) {
-                customization.nextIconContent()
+            IconButton(onClick = onNextClick.value) {
+                NextIcon()
             }
         }
     }

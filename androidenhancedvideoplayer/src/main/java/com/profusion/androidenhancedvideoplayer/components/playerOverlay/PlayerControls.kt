@@ -1,10 +1,14 @@
 package com.profusion.androidenhancedvideoplayer.components.playerOverlay
 
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.Stable
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.tooling.preview.Preview
 
+@Stable
 class ControlsCustomization(
     val previousIconContent: @Composable () -> Unit = { PreviousIcon() },
     val playIconContent: @Composable () -> Unit = { PlayIcon() },
@@ -36,6 +40,12 @@ fun PlayerControls(
     settingsControlsCustomization: SettingsControlsCustomization,
     modifier: Modifier = Modifier
 ) {
+    val onPreviousClick = remember { mutableStateOf(onPreviousClick) }
+    val onNextClick = remember { mutableStateOf(onNextClick) }
+    val onPauseToggle = remember { mutableStateOf(onPauseToggle) }
+    val onFullScreenToggle = remember { mutableStateOf(onFullScreenToggle) }
+    val onSpeedSelected = remember { mutableStateOf(onSpeedSelected) }
+    val onSeekBarValueChange = remember { mutableStateOf(onSeekBarValueChange) }
     PlayerControlsScaffold(
         modifier = modifier.testTag("PlayerControlsParent"),
         isVisible = isVisible,
@@ -50,11 +60,9 @@ fun PlayerControls(
                 speed = speed,
                 currentTime = currentTime,
                 totalDuration = totalDuration,
-                onFullScreenToggle = onFullScreenToggle,
-                onSpeedSelected = onSpeedSelected,
-                onSeekBarValueChange = onSeekBarValueChange,
-                customization = customization,
-                settingsControlsCustomization = settingsControlsCustomization
+                onFullScreenToggle = onFullScreenToggle.value,
+                onSpeedSelected = onSpeedSelected.value,
+                onSeekBarValueChange = onSeekBarValueChange.value
             )
         }
     ) {
@@ -62,10 +70,9 @@ fun PlayerControls(
             modifier = Modifier.weight(1f),
             isPlaying = isPlaying,
             hasEnded = hasEnded,
-            customization = customization,
-            onPreviousClick = onPreviousClick,
-            onNextClick = onNextClick,
-            onPauseToggle = onPauseToggle
+            onPreviousClick = onPreviousClick.value,
+            onNextClick = onNextClick.value,
+            onPauseToggle = onPauseToggle.value
         )
     }
 }

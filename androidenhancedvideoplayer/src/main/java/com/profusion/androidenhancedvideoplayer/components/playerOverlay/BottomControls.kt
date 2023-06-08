@@ -14,8 +14,11 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Slider
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.Stable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.saveable.Saver
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
@@ -24,6 +27,14 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.testTag
 import com.profusion.androidenhancedvideoplayer.styling.Dimensions
 import com.profusion.androidenhancedvideoplayer.utils.formatElapsedTime
+
+@Stable
+data class Holder<T>(var value: T)
+
+val FloatRangeSaver = Saver<Holder<ClosedFloatingPointRange<Float>>, List<Float>>(
+    save = { listOf<Float>(it.value.start, it.value.endInclusive) },
+    restore = { Holder(it[0]..it[1]) }
+)
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -35,10 +46,15 @@ fun BottomControls(
     onSpeedSelected: (Float) -> Unit,
     onFullScreenToggle: () -> Unit,
     onSeekBarValueChange: (Long) -> Unit,
-    customization: ControlsCustomization,
-    settingsControlsCustomization: SettingsControlsCustomization,
     modifier: Modifier = Modifier
 ) {
+    val currentTimeInFloat by rememberSaveable { mutableStateOf(currentTime.toFloat()) }
+    val valueRange by rememberSaveable(stateSaver = FloatRangeSaver) {
+        mutableStateOf(Holder(0f..totalDuration.toFloat()))
+    }
+    val onSeekBarValueChange = remember {
+        mutableStateOf(onSeekBarValueChange)
+    }
     Column(
         modifier = modifier
             .fillMaxWidth()
@@ -46,9 +62,9 @@ fun BottomControls(
             .padding(Dimensions.small)
     ) {
         Slider(
-            value = currentTime.toFloat(),
-            onValueChange = { onSeekBarValueChange(it.toLong()) },
-            valueRange = 0f..totalDuration.toFloat()
+            value = currentTimeInFloat,
+            onValueChange = { onSeekBarValueChange.value(it.toLong()) },
+            valueRange = valueRange.value
         )
         Row(
             verticalAlignment = Alignment.CenterVertically
@@ -67,15 +83,15 @@ fun BottomControls(
                 onClick = { isSettingsOpen = !isSettingsOpen },
                 modifier = Modifier.testTag("SettingsButton")
             ) {
-                customization.settingsIconContent()
+                SettingsIcon()
             }
             IconButton(
                 onClick = onFullScreenToggle,
                 modifier = Modifier.testTag("FullScreenToggleButton")
             ) {
                 when (isFullScreen) {
-                    true -> customization.exitFullScreenIconContent()
-                    false -> customization.fullScreenIconContent()
+                    true -> ExitFullScreenIcon()
+                    false -> FullScreenIcon()
                 }
             }
 
@@ -83,8 +99,7 @@ fun BottomControls(
                 Settings(
                     onDismissRequest = { isSettingsOpen = false },
                     speed = speed,
-                    onSpeedSelected = onSpeedSelected,
-                    customization = settingsControlsCustomization
+                    onSpeedSelected = onSpeedSelected
                 )
             }
         }
