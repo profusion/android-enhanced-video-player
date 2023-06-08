@@ -31,6 +31,7 @@ import com.profusion.androidenhancedvideoplayer.components.playerOverlay.Setting
 import com.profusion.androidenhancedvideoplayer.utils.TimeoutEffect
 import com.profusion.androidenhancedvideoplayer.utils.fillMaxSizeOnLandscape
 import com.profusion.androidenhancedvideoplayer.utils.setLandscape
+import com.profusion.androidenhancedvideoplayer.utils.setNavigationBarVisibility
 import com.profusion.androidenhancedvideoplayer.utils.setPortrait
 import com.profusion.androidenhancedvideoplayer.utils.setStatusBarVisibility
 
@@ -108,9 +109,9 @@ fun EnhancedVideoPlayer(
     val isFullScreen = orientation == Configuration.ORIENTATION_LANDSCAPE
 
     if (enableImmersiveMode) {
-        context.setStatusBarVisibility(
-            showStatusBar = isControlsVisible || !isFullScreen
-        )
+        val shouldShowSystemUi = !isFullScreen
+        context.setStatusBarVisibility(shouldShowSystemUi)
+        context.setNavigationBarVisibility(shouldShowSystemUi)
     }
 
     DisposableEffect(context) {
