@@ -57,6 +57,7 @@ fun EnhancedVideoPlayer(
     enableImmersiveMode: Boolean = true,
     playImmediately: Boolean = true,
     soundOff: Boolean = true,
+    disableControls: Boolean = false,
     currentTimeTickInMs: Long = CURRENT_TIME_TICK_IN_MS,
     controlsCustomization: ControlsCustomization = ControlsCustomization(),
     settingsControlsCustomization: SettingsControlsCustomization = SettingsControlsCustomization(),
@@ -74,6 +75,7 @@ fun EnhancedVideoPlayer(
         enableImmersiveMode = enableImmersiveMode,
         playImmediately = playImmediately,
         soundOff = soundOff,
+        disableControls = disableControls,
         currentTimeTickInMs = currentTimeTickInMs,
         controlsCustomization = controlsCustomization,
         settingsControlsCustomization = settingsControlsCustomization,
@@ -90,6 +92,7 @@ fun EnhancedVideoPlayer(
     enableImmersiveMode: Boolean = true,
     playImmediately: Boolean = true,
     soundOff: Boolean = true,
+    disableControls: Boolean = false,
     currentTimeTickInMs: Long = CURRENT_TIME_TICK_IN_MS,
     controlsCustomization: ControlsCustomization = ControlsCustomization(),
     transformSeekIncrementRatio: (tapCount: Int) -> Long = { it -> it * DEFAULT_SEEK_TIME_MS },
@@ -178,47 +181,51 @@ fun EnhancedVideoPlayer(
                 }
             }
         )
-        Box(modifier = Modifier.matchParentSize()) {
-            SeekHandler(
-                disableSeekForward = hasEnded,
-                isControlsVisible = isControlsVisible,
-                exoPlayer = exoPlayer,
-                controlsCustomization = controlsCustomization,
-                toggleControlsVisibility = { isControlsVisible = !isControlsVisible },
-                setControlsVisibility = ::setControlsVisibility,
-                transformSeekIncrementRatio = transformSeekIncrementRatio
+        if (!disableControls) {
+            Box(modifier = Modifier.matchParentSize()) {
+                SeekHandler(
+                    disableSeekForward = hasEnded,
+                    isControlsVisible = isControlsVisible,
+                    exoPlayer = exoPlayer,
+                    controlsCustomization = controlsCustomization,
+                    toggleControlsVisibility = {
+                        setControlsVisibility(!isControlsVisible)
+                    },
+                    setControlsVisibility = ::setControlsVisibility,
+                    transformSeekIncrementRatio = transformSeekIncrementRatio
+                )
+            }
+
+            PlayerControls(
+                title = title,
+                isVisible = isControlsVisible,
+                isPlaying = isPlaying,
+                isFullScreen = isFullScreen,
+                hasEnded = hasEnded,
+                speed = speed,
+                totalDuration = totalDuration,
+                currentTime = currentTime,
+                onPreviousClick = exoPlayer::seekToPrevious,
+                onNextClick = exoPlayer::seekToNext,
+                onPauseToggle = when {
+                    hasEnded -> exoPlayer::seekToDefaultPosition
+                    isPlaying -> exoPlayer::pause
+                    else -> exoPlayer::play
+                },
+                onFullScreenToggle = {
+                    when (isFullScreen) {
+                        true -> context.setPortrait()
+                        false -> context.setLandscape()
+                    }
+                },
+                onSpeedSelected = exoPlayer::setPlaybackSpeed,
+                onSeekBarValueChange = exoPlayer::seekTo,
+                customization = controlsCustomization,
+                settingsControlsCustomization = settingsControlsCustomization,
+                modifier = Modifier
+                    .matchParentSize()
+                    .testTag("PlayerControlsParent")
             )
         }
-
-        PlayerControls(
-            title = title,
-            isVisible = isControlsVisible,
-            isPlaying = isPlaying,
-            isFullScreen = isFullScreen,
-            hasEnded = hasEnded,
-            speed = speed,
-            totalDuration = totalDuration,
-            currentTime = currentTime,
-            onPreviousClick = exoPlayer::seekToPrevious,
-            onNextClick = exoPlayer::seekToNext,
-            onPauseToggle = when {
-                hasEnded -> exoPlayer::seekToDefaultPosition
-                isPlaying -> exoPlayer::pause
-                else -> exoPlayer::play
-            },
-            onFullScreenToggle = {
-                when (isFullScreen) {
-                    true -> context.setPortrait()
-                    false -> context.setLandscape()
-                }
-            },
-            onSpeedSelected = exoPlayer::setPlaybackSpeed,
-            onSeekBarValueChange = exoPlayer::seekTo,
-            customization = controlsCustomization,
-            settingsControlsCustomization = settingsControlsCustomization,
-            modifier = Modifier
-                .matchParentSize()
-                .testTag("PlayerControlsParent")
-        )
     }
 }
