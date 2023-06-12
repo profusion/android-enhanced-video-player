@@ -1,11 +1,13 @@
 package com.profusion.androidenhancedvideoplayer.components.playerOverlay
 
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.Stable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.tooling.preview.Preview
 
-class ControlsCustomization(
+@Stable
+data class ControlsCustomization(
     val previousIconContent: @Composable () -> Unit = { PreviousIcon() },
     val playIconContent: @Composable () -> Unit = { PlayIcon() },
     val pauseIconContent: @Composable () -> Unit = { PauseIcon() },

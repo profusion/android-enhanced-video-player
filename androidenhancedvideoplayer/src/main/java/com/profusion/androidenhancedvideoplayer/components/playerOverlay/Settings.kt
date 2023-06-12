@@ -9,6 +9,7 @@ import androidx.compose.material3.ModalBottomSheet
 import androidx.compose.material3.Text
 import androidx.compose.material3.rememberModalBottomSheetState
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.Stable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.rememberCoroutineScope
@@ -23,6 +24,7 @@ import com.profusion.androidenhancedvideoplayer.R
 import com.profusion.androidenhancedvideoplayer.styling.Dimensions
 import kotlinx.coroutines.launch
 
+@Stable
 data class SettingsControlsCustomization(
     val speeds: List<Float> = listOf(0.5f, 0.75f, 1.0f, 1.25f, 1.5f),
     val speedIconContent: @Composable () -> Unit = { SpeedIcon() },
