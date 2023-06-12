@@ -66,6 +66,7 @@ fun VideoFromResources() {
         resourceId = R.raw.spinning_earth,
         zoomToFit = false,
         enableImmersiveMode = true,
+        disableControls = false,
         alwaysRepeat = false,
         settingsControlsCustomization = SettingsControlsCustomization(
             speeds = listOf(0.5f, 1f, 2f, 4f)
