@@ -54,6 +54,7 @@ fun SeekHandler(
     val transition = rememberInfiniteTransition(TRANSITION_LABEL)
 
     val scale = transition.animateFloat(
+        label = TRANSITION_LABEL,
         initialValue = ICON_INITIAL_SCALE,
         targetValue = ICON_TARGET_SCALE,
         animationSpec = infiniteRepeatable(
