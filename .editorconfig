@@ -2,5 +2,6 @@ root = true
 
 [*.{kt,kts}]
 #Custom configuration
+ktlint_code_style=android
 ktlint_disabled_rules = no-wildcard-imports
 insert_final_newline = true
