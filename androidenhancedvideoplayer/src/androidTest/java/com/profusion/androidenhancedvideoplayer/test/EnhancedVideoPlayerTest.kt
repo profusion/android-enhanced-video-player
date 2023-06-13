@@ -34,6 +34,25 @@ class EnhancedVideoPlayerTest {
     }
 
     @Test
+    fun enhancedVideoPlayer_WhenClickingOnVideoShouldNotShowControlsWhenControlsDisabled() {
+        composeTestRule.setContent {
+            EnhancedVideoPlayer(
+                resourceId = R.raw.login_screen_background,
+                disableControls = true
+            )
+        }
+
+        composeTestRule.onNodeWithTag("PlayerControlsParent").assertDoesNotExist()
+
+        composeTestRule.onNodeWithTag("VideoPlayerParent")
+            .assertIsDisplayed()
+            .performClick()
+
+        composeTestRule.onNodeWithTag("PlayerControlsParent", useUnmergedTree = true)
+            .assertDoesNotExist()
+    }
+
+    @Test
     fun enhancedVideoPlayer_WhenDoubleClickHappenOnTheFirstHalfOfScreenVideoShouldShowRewindIcon() {
         composeTestRule.setContent {
             EnhancedVideoPlayer(
