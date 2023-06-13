@@ -35,7 +35,7 @@ class MainActivity : ComponentActivity() {
                             .fillMaxSizeOnLandscape(orientation = orientation)
                             .fillMaxWidth()
                     ) {
-                        VideoFromHLSUri()
+                        VideoFromDASHUri()
                     }
                     RecommendedVideosComponent()
                 }
@@ -65,6 +65,21 @@ fun VideoFromHLSUri() {
     EnhancedVideoPlayer(
         mediaItem = MediaItem.fromUri(
             "https://demo-streaming.gcdn.co/videos/676_YJHUNNocCsrjiCDx/master.m3u8"
+        ),
+        zoomToFit = false,
+        enableImmersiveMode = true,
+        alwaysRepeat = false,
+        settingsControlsCustomization = SettingsControlsCustomization(
+            speeds = listOf(0.5f, 1f, 2f, 4f)
+        )
+    )
+}
+
+@Composable
+fun VideoFromDASHUri() {
+    EnhancedVideoPlayer(
+        mediaItem = MediaItem.fromUri(
+            "https://dash.akamaized.net/akamai/bbb_30fps/bbb_30fps.mpd"
         ),
         zoomToFit = false,
         enableImmersiveMode = true,
