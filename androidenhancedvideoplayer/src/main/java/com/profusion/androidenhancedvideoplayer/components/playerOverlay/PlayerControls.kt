@@ -27,6 +27,7 @@ fun PlayerControls(
     isFullScreen: Boolean,
     hasEnded: Boolean,
     speed: Float,
+    isLoopEnabled: Boolean,
     currentTime: Long,
     totalDuration: Long,
     onPreviousClick: () -> Unit,
@@ -34,6 +35,7 @@ fun PlayerControls(
     onNextClick: () -> Unit,
     onFullScreenToggle: () -> Unit,
     onSpeedSelected: (Float) -> Unit,
+    onIsLoopEnabledSelected: (Boolean) -> Unit,
     onSeekBarValueChange: (Long) -> Unit,
     customization: ControlsCustomization,
     settingsControlsCustomization: SettingsControlsCustomization
@@ -50,10 +52,12 @@ fun PlayerControls(
             BottomControls(
                 isFullScreen = isFullScreen,
                 speed = speed,
+                isLoopEnabled = isLoopEnabled,
                 currentTime = currentTime,
                 totalDuration = totalDuration,
                 onFullScreenToggle = onFullScreenToggle,
                 onSpeedSelected = onSpeedSelected,
+                onIsLoopEnabledSelected = onIsLoopEnabledSelected,
                 onSeekBarValueChange = onSeekBarValueChange,
                 customization = customization,
                 settingsControlsCustomization = settingsControlsCustomization
@@ -82,6 +86,7 @@ private fun PreviewPlayerControls() {
         hasEnded = false,
         isFullScreen = false,
         speed = 1f,
+        isLoopEnabled = false,
         currentTime = 0L,
         totalDuration = 0L,
         onPreviousClick = {},
@@ -89,6 +94,7 @@ private fun PreviewPlayerControls() {
         onNextClick = {},
         onFullScreenToggle = {},
         onSpeedSelected = {},
+        onIsLoopEnabledSelected = {},
         onSeekBarValueChange = {},
         customization = ControlsCustomization(),
         settingsControlsCustomization = SettingsControlsCustomization()

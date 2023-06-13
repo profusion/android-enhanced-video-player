@@ -30,9 +30,11 @@ import com.profusion.androidenhancedvideoplayer.utils.formatElapsedTime
 fun BottomControls(
     isFullScreen: Boolean,
     speed: Float,
+    isLoopEnabled: Boolean,
     currentTime: Long,
     totalDuration: Long,
     onSpeedSelected: (Float) -> Unit,
+    onIsLoopEnabledSelected: (Boolean) -> Unit,
     onFullScreenToggle: () -> Unit,
     onSeekBarValueChange: (Long) -> Unit,
     customization: ControlsCustomization,
@@ -83,7 +85,9 @@ fun BottomControls(
                 Settings(
                     onDismissRequest = { isSettingsOpen = false },
                     speed = speed,
+                    isLoopEnabled = isLoopEnabled,
                     onSpeedSelected = onSpeedSelected,
+                    onIsLoopEnabledSelected = onIsLoopEnabledSelected,
                     customization = settingsControlsCustomization
                 )
             }

@@ -11,6 +11,7 @@ fun DefaultPlayerControls(
     isFullScreen: Boolean = false,
     hasEnded: Boolean = false,
     speed: Float = 1f,
+    isLoopEnabled: Boolean = false,
     videoTimer: Long = 0,
     totalDuration: Long = 0,
     onPreviousClick: () -> Unit = {},
@@ -18,6 +19,7 @@ fun DefaultPlayerControls(
     onNextClick: () -> Unit = {},
     onFullScreenToggle: () -> Unit = {},
     onSpeedSelected: (Float) -> Unit = {},
+    onIsLoopEnabledSelected: (Boolean) -> Unit = {},
     onSeekBarValueChange: (Long) -> Unit = {},
     customization: ControlsCustomization = ControlsCustomization(),
     settingsControlsCustomization: SettingsControlsCustomization = SettingsControlsCustomization()
@@ -29,6 +31,7 @@ fun DefaultPlayerControls(
         isFullScreen = isFullScreen,
         hasEnded = hasEnded,
         speed = speed,
+        isLoopEnabled = isLoopEnabled,
         currentTime = videoTimer,
         totalDuration = totalDuration,
         onPreviousClick = onPreviousClick,
@@ -36,6 +39,7 @@ fun DefaultPlayerControls(
         onNextClick = onNextClick,
         onFullScreenToggle = onFullScreenToggle,
         onSpeedSelected = onSpeedSelected,
+        onIsLoopEnabledSelected = onIsLoopEnabledSelected,
         onSeekBarValueChange = onSeekBarValueChange,
         customization = customization,
         settingsControlsCustomization = settingsControlsCustomization

@@ -1,5 +1,8 @@
 <resources>
     <string name="settings_check_description">Selected</string>
+    <string name="settings_off">Off</string>
+    <string name="settings_on">On</string>
+    <string name="settings_repeat">Loop video</string>
     <string name="settings_repeat_description">Loop</string>
     <string name="settings_speed">Playback Speed</string>
     <string name="settings_speed_description">Speed</string>
