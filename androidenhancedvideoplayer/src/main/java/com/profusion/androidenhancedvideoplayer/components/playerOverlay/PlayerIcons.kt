@@ -127,3 +127,13 @@ fun RewindIcon(modifier: Modifier = Modifier) {
         modifier = modifier.testTag("RewindIcon")
     )
 }
+
+@Composable
+fun RepeatIcon(modifier: Modifier = Modifier) {
+    Icon(
+        painter = painterResource(id = R.drawable.ic_repeat),
+        tint = MaterialTheme.colorScheme.onPrimaryContainer,
+        contentDescription = stringResource(R.string.settings_repeat_description),
+        modifier = modifier.testTag("RepeatIcon")
+    )
+}
