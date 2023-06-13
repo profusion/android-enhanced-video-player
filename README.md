@@ -7,12 +7,13 @@ Enhanced Video Player for Android built on top of Exoplayer compliant with Andro
 
 ## Table of Contents
 
-- [Table of Contents](#table-of-contents)
-- [Installation](#installation)
-- [Media Types](#media-types)
-  - [HLS](#hls)
-  - [DASH](#dash)
-- [Documentation](#documentation)
+  - [Table of Contents](#table-of-contents)
+  - [Installation](#installation)
+  - [Media Types](#media-types)
+    - [HLS](#hls)
+    - [DASH](#dash)
+    - [MSS/SmoothStreaming](#msssmoothstreaming)
+  - [Documentation](#documentation)
 
 ## Installation
 
@@ -70,11 +71,32 @@ Add the following module to the app's `build.gradle`
 implementation "androidx.media3:media3-exoplayer-dash:$mediaVersion"
 ```
 
-When creating the `MediaItem` you can simply pass the URI if it ends with `.mpd` or you can pass `MimeTypes.APPLICATION_MPD` to `setMimeType` of `MediaItem.Builder`
+When creating the `MediaItem` you can simply pass the URI if it ends with `.mpd` or you can
+pass `MimeTypes.APPLICATION_MPD` to `setMimeType` of `MediaItem.Builder`
 
 ```kotlin
 val mediaItem = MediaItem.Builder()
         .setMimeType(MimeTypes.APPLICATION_MPD)
+        .setUri(SOME_URI)
+        .build()
+
+EnhancedVideoPlayer(mediaItem = mediaItem)
+```
+
+### MSS/SmoothStreaming
+
+Add the following module to the app's `build.gradle`
+
+```groovy
+implementation "androidx.media3:media3-exoplayer-smoothstreaming:$mediaVersion"
+```
+
+When creating the `MediaItem` you can simply pass the URI if it ends with `.ism/Manifest` or
+you can pass `MimeTypes.APPLICATION_SS` to `setMimeType` of `MediaItem.Builder`
+
+```kotlin
+val mediaItem = MediaItem.Builder()
+        .setMimeType(MimeTypes.APPLICATION_SS)
         .setUri(SOME_URI)
         .build()
 
