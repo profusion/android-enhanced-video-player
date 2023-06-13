@@ -69,6 +69,7 @@ dependencies {
     implementation "androidx.media3:media3-ui:$mediaVersion"
     implementation "androidx.media3:media3-exoplayer-dash:$mediaVersion"
     implementation "androidx.media3:media3-exoplayer-hls:$mediaVersion"
+    implementation "androidx.media3:media3-exoplayer-smoothstreaming:$mediaVersion"
 
     // our library
     implementation project(':androidenhancedvideoplayer')
