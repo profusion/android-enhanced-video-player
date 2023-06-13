@@ -14,6 +14,7 @@ import androidx.core.view.WindowCompat
 import androidx.media3.common.MediaItem
 import com.example.androidenhancedvideoplayer.components.RecommendedVideosComponent
 import com.example.androidenhancedvideoplayer.ui.theme.AndroidEnhancedVideoPlayerTheme
+import com.example.androidenhancedvideoplayer.utils.ExampleUrl
 import com.example.androidenhancedvideoplayer.utils.fillMaxSizeOnLandscape
 import com.profusion.androidenhancedvideoplayer.components.EnhancedVideoPlayer
 import com.profusion.androidenhancedvideoplayer.components.playerOverlay.SettingsControlsCustomization
@@ -35,7 +36,7 @@ class MainActivity : ComponentActivity() {
                             .fillMaxSizeOnLandscape(orientation = orientation)
                             .fillMaxWidth()
                     ) {
-                        VideoFromDASHUri()
+                        VideoFromMSSUri()
                     }
                     RecommendedVideosComponent()
                 }
@@ -47,10 +48,7 @@ class MainActivity : ComponentActivity() {
 @Composable
 fun VideoFromURL() {
     EnhancedVideoPlayer(
-        mediaItem = MediaItem.fromUri(
-            "https://commondatastorage.googleapis.com/" +
-                "gtv-videos-bucket/sample/ElephantsDream.mp4"
-        ),
+        mediaItem = MediaItem.fromUri(ExampleUrl.MP4),
         zoomToFit = false,
         enableImmersiveMode = true,
         alwaysRepeat = false,
@@ -63,9 +61,7 @@ fun VideoFromURL() {
 @Composable
 fun VideoFromHLSUri() {
     EnhancedVideoPlayer(
-        mediaItem = MediaItem.fromUri(
-            "https://demo-streaming.gcdn.co/videos/676_YJHUNNocCsrjiCDx/master.m3u8"
-        ),
+        mediaItem = MediaItem.fromUri(ExampleUrl.HLS),
         zoomToFit = false,
         enableImmersiveMode = true,
         alwaysRepeat = true,
@@ -78,9 +74,20 @@ fun VideoFromHLSUri() {
 @Composable
 fun VideoFromDASHUri() {
     EnhancedVideoPlayer(
-        mediaItem = MediaItem.fromUri(
-            "https://dash.akamaized.net/akamai/bbb_30fps/bbb_30fps.mpd"
-        ),
+        mediaItem = MediaItem.fromUri(ExampleUrl.DASH),
+        zoomToFit = false,
+        enableImmersiveMode = true,
+        alwaysRepeat = false,
+        settingsControlsCustomization = SettingsControlsCustomization(
+            speeds = listOf(0.5f, 1f, 2f, 4f)
+        )
+    )
+}
+
+@Composable
+fun VideoFromMSSUri() {
+    EnhancedVideoPlayer(
+        mediaItem = MediaItem.fromUri(ExampleUrl.MSS),
         zoomToFit = false,
         enableImmersiveMode = true,
         alwaysRepeat = false,
