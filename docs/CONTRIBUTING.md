@@ -42,7 +42,7 @@ This will install husky pre-commit, pre-push and msg-commit hooks.
 ### Install Ktlint to IDE
 Make sure to open this project with Android Studio at least once before proceeding with ktlint instalation. That guarantees some hidden files/folders (like `.idea`) exist and can be configured by the following command. Navigate to the project’s directory in the terminal and execute:
 ```console
-ktlint applyToIDEAProject
+./gradlew ktlintApplyToIdea
 ```
 
 This will change Android Studio's code format configurations. The next time you apply an automatic code formatting on a kotlin file, it will use our new set of rules defined by ktlint.
