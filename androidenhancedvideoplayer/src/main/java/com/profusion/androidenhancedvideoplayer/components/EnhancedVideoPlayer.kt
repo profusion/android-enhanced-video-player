@@ -5,22 +5,13 @@ import android.net.Uri
 import androidx.compose.animation.*
 import androidx.compose.animation.core.*
 import androidx.compose.foundation.*
-import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
-import androidx.compose.foundation.layout.Box
 import androidx.compose.material.*
 import androidx.compose.runtime.*
-import androidx.compose.runtime.Composable
-import androidx.compose.runtime.DisposableEffect
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
-import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.*
 import androidx.compose.ui.graphics.*
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.testTag
@@ -116,6 +107,7 @@ fun EnhancedVideoPlayer(
     var hasEnded by remember { mutableStateOf(exoPlayer.playbackState == ExoPlayer.STATE_ENDED) }
     var isControlsVisible by remember { mutableStateOf(false) }
     var speed by remember { mutableStateOf(exoPlayer.playbackParameters.speed) }
+    var loop by remember { mutableStateOf(exoPlayer.repeatMode == ExoPlayer.REPEAT_MODE_ALL) }
     var currentTime by remember { mutableStateOf(exoPlayer.contentPosition) }
     var totalDuration by remember { mutableStateOf(exoPlayer.duration) }
     var title by remember {
@@ -142,6 +134,7 @@ fun EnhancedVideoPlayer(
                 title = player.mediaMetadata.title?.toString()
                 currentTime = player.contentPosition
                 totalDuration = player.duration
+                loop = player.repeatMode == ExoPlayer.REPEAT_MODE_ALL
                 super.onEvents(player, events)
             }
         }
@@ -203,6 +196,7 @@ fun EnhancedVideoPlayer(
                 isFullScreen = isFullScreen,
                 hasEnded = hasEnded,
                 speed = speed,
+                isLoopEnabled = loop,
                 totalDuration = totalDuration,
                 currentTime = currentTime,
                 onPreviousClick = exoPlayer::seekToPrevious,
@@ -219,6 +213,13 @@ fun EnhancedVideoPlayer(
                     }
                 },
                 onSpeedSelected = exoPlayer::setPlaybackSpeed,
+                onIsLoopEnabledSelected = { value ->
+                    exoPlayer.repeatMode = if (value) {
+                        ExoPlayer.REPEAT_MODE_ALL
+                    } else {
+                        ExoPlayer.REPEAT_MODE_OFF
+                    }
+                },
                 onSeekBarValueChange = exoPlayer::seekTo,
                 customization = controlsCustomization,
                 settingsControlsCustomization = settingsControlsCustomization,

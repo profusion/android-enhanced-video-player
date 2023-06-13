@@ -68,7 +68,7 @@ fun VideoFromHLSUri() {
         ),
         zoomToFit = false,
         enableImmersiveMode = true,
-        alwaysRepeat = false,
+        alwaysRepeat = true,
         settingsControlsCustomization = SettingsControlsCustomization(
             speeds = listOf(0.5f, 1f, 2f, 4f)
         )

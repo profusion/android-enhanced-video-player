@@ -1,5 +1,8 @@
 <resources>
     <string name="settings_check_description">Selecionado</string>
+    <string name="settings_off">Desativado</string>
+    <string name="settings_on">Ativado</string>
+    <string name="settings_repeat">Repetir vídeo</string>
     <string name="settings_repeat_description">Repetir</string>
     <string name="settings_speed">Velocidade</string>
     <string name="settings_speed_description">Velocidade</string>

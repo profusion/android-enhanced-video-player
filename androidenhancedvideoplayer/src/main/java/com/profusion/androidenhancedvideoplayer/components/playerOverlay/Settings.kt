@@ -12,6 +12,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.rememberCoroutineScope
+import androidx.compose.runtime.rememberUpdatedState
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
@@ -25,6 +26,7 @@ import kotlinx.coroutines.launch
 data class SettingsControlsCustomization(
     val speeds: List<Float> = listOf(0.5f, 0.75f, 1.0f, 1.25f, 1.5f),
     val speedIconContent: @Composable () -> Unit = { SpeedIcon() },
+    val repeatIconContent: @Composable () -> Unit = { RepeatIcon() },
     val modifier: Modifier = Modifier
 )
 
@@ -32,8 +34,10 @@ data class SettingsControlsCustomization(
 @Composable
 fun Settings(
     speed: Float,
+    isLoopEnabled: Boolean,
     onDismissRequest: () -> Unit,
     onSpeedSelected: (Float) -> Unit,
+    onIsLoopEnabledSelected: (Boolean) -> Unit,
     customization: SettingsControlsCustomization
 ) {
     val sheetState = rememberModalBottomSheetState()
@@ -49,6 +53,12 @@ fun Settings(
             value = speed,
             items = customization.speeds,
             onSelected = onSpeedSelected
+        )
+        SettingsSelector(
+            label = stringResource(id = R.string.settings_repeat),
+            icon = customization.repeatIconContent,
+            value = isLoopEnabled,
+            onSelected = onIsLoopEnabledSelected
         )
     }
 }
@@ -107,14 +117,44 @@ private fun <T>SettingsSelector(
     }
 }
 
+@Composable
+private fun SettingsSelector(
+    label: String,
+    value: Boolean,
+    onSelected: (Boolean) -> Unit,
+    icon: @Composable () -> Unit = {},
+    modifier: Modifier = Modifier
+) {
+    val currentOnSelected by rememberUpdatedState(onSelected)
+
+    ListItem(
+        headlineContent = { Text(label) },
+        leadingContent = icon,
+        trailingContent = {
+            Text(
+                text = if (value) {
+                    stringResource(id = R.string.settings_on)
+                } else {
+                    stringResource(id = R.string.settings_off)
+                }
+            )
+        },
+        modifier = modifier
+            .clickable(onClick = { currentOnSelected(!value) })
+            .testTag("${label}SettingsButton")
+    )
+}
+
 @OptIn(ExperimentalMaterial3Api::class)
 @Preview(showBackground = true)
 @Composable
 private fun PreviewSettings() {
     Settings(
         speed = 1.0f,
+        isLoopEnabled = false,
         onDismissRequest = { },
         onSpeedSelected = { },
+        onIsLoopEnabledSelected = { },
         customization = SettingsControlsCustomization()
     )
 }
