@@ -8,10 +8,10 @@ fun formatElapsedTime(value: Long): String {
     val minutes = value.millisecondsToMinutes % SECONDS_PER_MINUTE
     val hours = value.millisecondsToHours
 
-    return if (hours > 0) {
-        "%02d:%02d:%02d".format(hours, minutes, seconds)
-    } else {
-        "%02d:%02d".format(minutes, seconds)
+    return when {
+        value < 0 -> "--:--"
+        hours > 0 -> "%02d:%02d:%02d".format(hours, minutes, seconds)
+        else -> "%02d:%02d".format(minutes, seconds)
     }
 }
 
