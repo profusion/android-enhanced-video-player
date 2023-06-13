@@ -5,15 +5,17 @@ Enhanced Video Player for Android built on top of Exoplayer compliant with Andro
 
 ## Table of Contents
 
-- [Table of Contents](#table-of-contents)
-- [Setup](#setup)
-  - [Pre-requirements](#pre-requirements)
-  - [Install Node](#install-node)
-  - [Install Ruby Dependencies](#install-ruby-dependencies)
-  - [Install JS Dependencies](#install-js-dependencies)
-  - [Install Ktlint to IDE](#install-ktlint-to-ide)
-- [Running the project](#running-the-project)
-- [Documentation](#documentation)
+  - [Table of Contents](#table-of-contents)
+  - [Setup](#setup)
+    - [Pre-requirements](#pre-requirements)
+    - [Install Node](#install-node)
+    - [Install Ruby Dependencies](#install-ruby-dependencies)
+    - [Install JS Dependencies](#install-js-dependencies)
+    - [Install Ktlint to IDE](#install-ktlint-to-ide)
+  - [Running the project](#running-the-project)
+  - [Media Types](#media-types)
+    - [DASH](#dash)
+  - [Documentation](#documentation)
 
 ## Setup
 
@@ -95,6 +97,25 @@ EnhancedVideoPlayer(
     "https://demo-streaming.gcdn.co/videos/676_YJHUNNocCsrjiCDx/master.m3u8"
   )
 )
+```
+
+### DASH
+
+Add the following module to the app's `build.gradle`
+
+```groovy
+implementation "androidx.media3:media3-exoplayer-dash:$mediaVersion"
+```
+
+When creating the `MediaItem` you can simply pass the URI if it ends with `.mpd` or you can pass `MimeTypes.APPLICATION_MPD` to `setMimeType` of `MediaItem.Builder`
+
+```kotlin
+val mediaItem = MediaItem.Builder()
+        .setMimeType(MimeTypes.APPLICATION_MPD)
+        .setUri(SOME_URI)
+        .build()
+
+EnhancedVideoPlayer(mediaItem = mediaItem)
 ```
 
 ## Documentation
