@@ -11,7 +11,6 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.Slider
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
@@ -47,10 +46,10 @@ fun BottomControls(
             .height(IntrinsicSize.Min)
             .padding(Dimensions.small)
     ) {
-        Slider(
-            value = currentTime.toFloat(),
-            onValueChange = { onSeekBarValueChange(it.toLong()) },
-            valueRange = 0f..totalDuration.toFloat()
+        TimeBarComponent(
+            currentTime = currentTime,
+            duration = totalDuration,
+            onTimeChange = onSeekBarValueChange
         )
         Row(
             verticalAlignment = Alignment.CenterVertically
