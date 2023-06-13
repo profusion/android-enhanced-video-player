@@ -69,6 +69,34 @@ This will change Android Studio's code format configurations. The next time you 
 
 To run the project, open it in the IDE, Android Studio, and execute it.
 
+## Media Types
+
+Exoplayer supports the three main adaptive streaming algorithms: HLS, DASH and MSS.
+However, this project does not add the modules responsible for that in the library
+module so we can lower the size of the distributed package.
+
+Any apps that import `EnhancedVideoPlayer` can still play URIs from adaptive
+streaming algorithms. To do that, one can import the necessary module's on the
+app's `build.gradle` as described below.
+
+### HLS
+
+Add the following module to the app's `build.gradle`
+
+```groovy
+implementation "androidx.media3:media3-exoplayer-hls:$mediaVersion"
+```
+
+When creating the `MediaItem`, simply pass the HLS URI
+
+```kotlin
+EnhancedVideoPlayer(
+  mediaItem = MediaItem.fromUri(
+    "https://demo-streaming.gcdn.co/videos/676_YJHUNNocCsrjiCDx/master.m3u8"
+  )
+)
+```
+
 ## Documentation
 
  - [Releasing](docs/RELEASING.md)
