@@ -6,7 +6,6 @@
 - [Setup](#setup)
   - [Pre-requirements](#pre-requirements)
   - [Install Node](#install-node)
-  - [Install Ruby Dependencies](#install-ruby-dependencies)
   - [Install JS Dependencies](#install-js-dependencies)
   - [Install Ktlint to IDE](#install-ktlint-to-ide)
 - [Running the project](#running-the-project)
@@ -18,8 +17,6 @@
 For the javascript runtime, we recommend [Node.js](https://nodejs.org/en/).
 
 We **strongly** suggest you to use [NVM \(Node Version Manager\)](https://github.com/nvm-sh/nvm) and also doing [this configuration](https://github.com/nvm-sh/nvm#deeper-shell-integration).
-
-We **strongly** suggest you to use [rbenv (Managing Ruby environment)](https://github.com/rbenv/rbenv).
 
 To ensure compatibility with [Android Gradle plugin](https://developer.android.com/studio/releases#android_gradle_plugin_and_android_studio_compatibility), it is mandatory to use Android Studio Flamingo or any subsequent version.
 
@@ -33,15 +30,6 @@ $ nvm use
 ```
 
 Every time you use the repo you will need to use `nvm use` in your terminal to commit
-
-### Install Ruby Dependencies
-
-```console
-$ rbenv install
-$ bundle install
-```
-
-This will install Ruby and fastlane, used for linting the project.
 
 ### Install JS Dependencies
 

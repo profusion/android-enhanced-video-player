@@ -8,9 +8,8 @@
   },
   "scripts": {
     "test": "./gradlew test",
-    "lint": "bundle exec fastlane lint",
-    "lint-fix": "bundle exec fastlane lint_staged autofix:true",
-    "lint-from-staged": "yarn lint-fix",
+    "lint": "./gradlew ktlintCheck",
+    "lint-fix": "./gradlew ktlintFormat",
     "pre-push": "run-p lint test",
     "prepare": "husky install"
   },
