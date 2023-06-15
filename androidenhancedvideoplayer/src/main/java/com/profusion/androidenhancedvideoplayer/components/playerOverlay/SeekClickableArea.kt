@@ -10,8 +10,8 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.draw.scale
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.res.stringResource
@@ -23,7 +23,7 @@ private const val TEXT_MAX_LINES = 2
 @Composable
 fun SeekClickableArea(
     modifier: Modifier = Modifier,
-    scaleAnimation: Float,
+    scaleAnimation: () -> Float,
     isSeeking: Boolean,
     disableSeekClick: Boolean = false,
     onSeekSingleTap: () -> Unit,
@@ -54,7 +54,12 @@ fun SeekClickableArea(
         if (isSeeking) {
             val timeLabel = getSeekTime()
             Column(horizontalAlignment = Alignment.CenterHorizontally) {
-                seekIcon(modifier = Modifier.scale(scaleAnimation))
+                seekIcon(
+                    modifier = Modifier.graphicsLayer {
+                        scaleX = scaleAnimation()
+                        scaleY = scaleAnimation()
+                    }
+                )
                 Spacer(modifier = Modifier.height(Dimensions.large))
                 Text(
                     text = "$timeLabel  ${stringResource(id = R.string.controls_time_unit)}",

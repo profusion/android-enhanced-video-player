@@ -51,7 +51,7 @@ fun SeekHandler(
 
     val transition = rememberInfiniteTransition(TRANSITION_LABEL)
 
-    val scale = transition.animateFloat(
+    val scale by transition.animateFloat(
         label = TRANSITION_LABEL,
         initialValue = ICON_INITIAL_SCALE,
         targetValue = ICON_TARGET_SCALE,
@@ -133,7 +133,7 @@ fun SeekHandler(
         SeekClickableArea(
             modifier = Modifier.weight(1f),
             isSeeking = isRewinding,
-            scaleAnimation = scale.value,
+            scaleAnimation = { scale },
             onSeekDoubleTap = ::onRewindDoubleTap,
             onSeekSingleTap = ::onRewindSingleTap,
             checkIfCanToggleIsControlsVisible = ::checkIfCanToggleIsControlsVisible,
@@ -144,7 +144,7 @@ fun SeekHandler(
         SeekClickableArea(
             modifier = Modifier.weight(1f),
             isSeeking = isForwarding,
-            scaleAnimation = scale.value,
+            scaleAnimation = { scale },
             disableSeekClick = disableSeekForward,
             onSeekDoubleTap = ::onForwardDoubleTap,
             onSeekSingleTap = ::onForwardSingleTap,
