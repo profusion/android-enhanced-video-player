@@ -1,5 +1,6 @@
 package com.profusion.androidenhancedvideoplayer.components.playerOverlay
 
+import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.Stable
 import androidx.compose.ui.Modifier
@@ -16,6 +17,9 @@ data class ControlsCustomization(
     val fullScreenIconContent: @Composable () -> Unit = { FullScreenIcon() },
     val exitFullScreenIconContent: @Composable () -> Unit = { ExitFullScreenIcon() },
     val settingsIconContent: @Composable () -> Unit = { SettingsIcon() },
+    val brightnessLowIconContent: @Composable () -> Unit = { BrightnessLowIcon() },
+    val brightnessHighIconContent: @Composable () -> Unit = { BrightnessHighIcon() },
+    val brightnessMedIconContent: @Composable () -> Unit = { BrightnessMedIcon() },
     val forwardIconContent: @Composable (modifier: Modifier) -> Unit = { ForwardIcon(it) },
     val rewindIconContent: @Composable (modifier: Modifier) -> Unit = { RewindIcon(it) }
 )
@@ -27,7 +31,9 @@ fun PlayerControls(
     isVisible: Boolean,
     isPlaying: Boolean,
     isFullScreen: Boolean,
+    isBrightnessSliderDragged: Boolean,
     hasEnded: Boolean,
+    brightnessMutableInteractionSource: MutableInteractionSource,
     currentTime: () -> Long,
     totalDuration: Long,
     onPreviousClick: () -> Unit,
@@ -41,13 +47,19 @@ fun PlayerControls(
     PlayerControlsScaffold(
         modifier = modifier.testTag("PlayerControlsParent"),
         isVisible = isVisible,
+        isFullScreen = isFullScreen,
+        isBrightnessSliderDragged = isBrightnessSliderDragged,
         topContent = {
             TopControls(
-                title = title
+                modifier = it,
+                title = title,
+                shouldShowContent = !isBrightnessSliderDragged
             )
         },
         bottomContent = {
             BottomControls(
+                modifier = it,
+                shouldShowContent = !isBrightnessSliderDragged,
                 isFullScreen = isFullScreen,
                 currentTime = currentTime,
                 totalDuration = totalDuration,
@@ -59,10 +71,13 @@ fun PlayerControls(
         }
     ) {
         MiddleControls(
-            modifier = Modifier.weight(1f),
+            modifier = it,
+            shouldShowContent = !isBrightnessSliderDragged,
             isPlaying = isPlaying,
+            isFullScreen = isFullScreen,
             hasEnded = hasEnded,
             customization = customization,
+            brightnessMutableInteractionSource = brightnessMutableInteractionSource,
             onPreviousClick = onPreviousClick,
             onNextClick = onNextClick,
             onPauseToggle = onPauseToggle
@@ -78,9 +93,11 @@ private fun PreviewPlayerControls() {
         isVisible = true,
         isPlaying = true,
         hasEnded = false,
+        isBrightnessSliderDragged = false,
         isFullScreen = false,
         currentTime = { 0L },
         totalDuration = 0L,
+        brightnessMutableInteractionSource = MutableInteractionSource(),
         onPreviousClick = {},
         onPauseToggle = {},
         onNextClick = {},

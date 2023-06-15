@@ -4,11 +4,15 @@ import android.content.res.Configuration
 import androidx.compose.animation.*
 import androidx.compose.animation.core.*
 import androidx.compose.foundation.*
+import androidx.compose.foundation.interaction.MutableInteractionSource
+import androidx.compose.foundation.interaction.collectIsDraggedAsState
 import androidx.compose.foundation.layout.*
 import androidx.compose.material.*
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.runtime.*
+import androidx.compose.runtime.getValue
 import androidx.compose.runtime.saveable.rememberSaveable
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.*
@@ -31,6 +35,7 @@ import com.profusion.androidenhancedvideoplayer.components.playerOverlay.Setting
 import com.profusion.androidenhancedvideoplayer.components.playerOverlay.SettingsControlsCustomization
 import com.profusion.androidenhancedvideoplayer.utils.TimeoutEffect
 import com.profusion.androidenhancedvideoplayer.utils.fillMaxSizeOnLandscape
+import com.profusion.androidenhancedvideoplayer.utils.resetActivityBrightnessToDefault
 import com.profusion.androidenhancedvideoplayer.utils.setLandscape
 import com.profusion.androidenhancedvideoplayer.utils.setNavigationBarVisibility
 import com.profusion.androidenhancedvideoplayer.utils.setPortrait
@@ -82,8 +87,18 @@ fun EnhancedVideoPlayer(
     var title by remember {
         mutableStateOf(exoPlayer.currentMediaItem?.mediaMetadata?.title?.toString())
     }
+
+    val brightnessMutableInteractionSource = remember { MutableInteractionSource() }
+    val isBrightnessSliderDragged by brightnessMutableInteractionSource.collectIsDraggedAsState()
+
     val isFullScreen = orientation == Configuration.ORIENTATION_LANDSCAPE
     var isSettingsOpen by rememberSaveable { mutableStateOf(false) }
+
+    LaunchedEffect(isFullScreen) {
+        if (!isFullScreen) {
+            context.resetActivityBrightnessToDefault()
+        }
+    }
 
     if (enableImmersiveMode) {
         val shouldShowSystemUi = !isFullScreen
@@ -122,9 +137,12 @@ fun EnhancedVideoPlayer(
         currentTime = exoPlayer.currentPosition
     }
 
-    LaunchedEffect(isControlsVisible, isPlaying) {
+    LaunchedEffect(isControlsVisible, isPlaying, isBrightnessSliderDragged) {
         if (
-            isControlsVisible && isPlaying && controlsVisibilityDurationInMs > 0
+            isControlsVisible &&
+            isPlaying &&
+            controlsVisibilityDurationInMs > 0 &&
+            !isBrightnessSliderDragged
         ) {
             delay(controlsVisibilityDurationInMs)
             isControlsVisible = false
@@ -171,7 +189,9 @@ fun EnhancedVideoPlayer(
                     isVisible = isControlsVisible,
                     isPlaying = isPlaying,
                     isFullScreen = isFullScreen,
+                    isBrightnessSliderDragged = isBrightnessSliderDragged,
                     hasEnded = hasEnded,
+                    brightnessMutableInteractionSource = brightnessMutableInteractionSource,
                     totalDuration = totalDuration,
                     currentTime = { currentTime },
                     onPreviousClick = exoPlayer::seekToPrevious,
@@ -192,7 +212,6 @@ fun EnhancedVideoPlayer(
                     customization = controlsCustomization
                 )
             }
-
             if (isSettingsOpen) {
                 Settings(
                     onDismissRequest = { isSettingsOpen = false },

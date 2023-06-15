@@ -1,5 +1,6 @@
 package com.profusion.androidenhancedvideoplayer.components.playerOverlay
 
+import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Row
@@ -13,9 +14,12 @@ import androidx.compose.ui.platform.testTag
 @Composable
 fun MiddleControls(
     modifier: Modifier = Modifier,
+    shouldShowContent: Boolean = true,
     isPlaying: Boolean,
+    isFullScreen: Boolean,
     hasEnded: Boolean,
     customization: ControlsCustomization,
+    brightnessMutableInteractionSource: MutableInteractionSource,
     onPreviousClick: () -> Unit,
     onNextClick: () -> Unit,
     onPauseToggle: () -> Unit
@@ -25,27 +29,35 @@ fun MiddleControls(
             .fillMaxWidth(),
         contentAlignment = Alignment.Center
     ) {
-        Row(
-            horizontalArrangement = Arrangement.SpaceEvenly,
-            verticalAlignment = Alignment.CenterVertically,
-            modifier = Modifier
-                .fillMaxWidth()
-        ) {
-            IconButton(onClick = onPreviousClick) {
-                customization.previousIconContent()
-            }
-            IconButton(
-                onClick = onPauseToggle,
-                modifier = Modifier.testTag("PauseToggleButton")
+        BrightnessControl(
+            modifier = Modifier.align(Alignment.CenterStart),
+            isFullScreen = isFullScreen,
+            customization = customization,
+            brightnessMutableInteractionSource = brightnessMutableInteractionSource
+        )
+        if (shouldShowContent) {
+            Row(
+                horizontalArrangement = Arrangement.SpaceEvenly,
+                verticalAlignment = Alignment.CenterVertically,
+                modifier = Modifier
+                    .fillMaxWidth()
             ) {
-                when {
-                    hasEnded -> customization.replayIconContent()
-                    isPlaying -> customization.pauseIconContent()
-                    else -> customization.playIconContent()
+                IconButton(onClick = onPreviousClick) {
+                    customization.previousIconContent()
                 }
-            }
-            IconButton(onClick = onNextClick) {
-                customization.nextIconContent()
+                IconButton(
+                    onClick = onPauseToggle,
+                    modifier = Modifier.testTag("PauseToggleButton")
+                ) {
+                    when {
+                        hasEnded -> customization.replayIconContent()
+                        isPlaying -> customization.pauseIconContent()
+                        else -> customization.playIconContent()
+                    }
+                }
+                IconButton(onClick = onNextClick) {
+                    customization.nextIconContent()
+                }
             }
         }
     }
