@@ -170,7 +170,7 @@ fun EnhancedVideoPlayer(
                 speed = speed,
                 isLoopEnabled = loop,
                 totalDuration = totalDuration,
-                currentTime = currentTime,
+                currentTime = { currentTime },
                 onPreviousClick = exoPlayer::seekToPrevious,
                 onNextClick = exoPlayer::seekToNext,
                 onPauseToggle = when {
