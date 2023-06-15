@@ -132,7 +132,7 @@ fun SeekHandler(
     ) {
         SeekClickableArea(
             modifier = Modifier.weight(1f),
-            tapCount = rewindTapCount,
+            isSeeking = isRewinding,
             scaleAnimation = scale.value,
             onSeekDoubleTap = ::onRewindDoubleTap,
             onSeekSingleTap = ::onRewindSingleTap,
@@ -143,7 +143,7 @@ fun SeekHandler(
         Spacer(modifier = Modifier.weight(0.2f))
         SeekClickableArea(
             modifier = Modifier.weight(1f),
-            tapCount = forwardTapCount,
+            isSeeking = isForwarding,
             scaleAnimation = scale.value,
             disableSeekClick = disableSeekForward,
             onSeekDoubleTap = ::onForwardDoubleTap,
