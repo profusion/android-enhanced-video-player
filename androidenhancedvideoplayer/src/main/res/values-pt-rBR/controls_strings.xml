@@ -1,4 +1,7 @@
 <resources>
+    <string name="controls_brightness_high_description">Luminosidade Alta</string>
+    <string name="controls_brightness_low_description">Luminosidade Baixa</string>
+    <string name="controls_brightness_med_description">Luminosidade Média</string>
     <string name="controls_exit_fullscreen_description">Sair da Tela Cheia</string>
     <string name="controls_forward_description">Avançar</string>
     <string name="controls_fullscreen_description">Tela Cheia</string>
