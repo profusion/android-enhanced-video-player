@@ -1,7 +1,6 @@
 package com.profusion.androidenhancedvideoplayer.components
 
 import android.content.res.Configuration
-import android.net.Uri
 import androidx.compose.animation.*
 import androidx.compose.animation.core.*
 import androidx.compose.foundation.*
@@ -35,45 +34,9 @@ import com.profusion.androidenhancedvideoplayer.utils.setPortrait
 import com.profusion.androidenhancedvideoplayer.utils.setStatusBarVisibility
 import kotlinx.coroutines.delay
 
-private const val MAIN_PACKAGE_PATH_PREFIX = "android.resource://"
 private const val CURRENT_TIME_TICK_IN_MS = 50L
 private const val PLAYER_CONTROLS_VISIBILITY_DURATION_IN_MS = 3000L // 3 seconds
 private const val DEFAULT_SEEK_TIME_MS = 10 * 1000L // 10 seconds
-
-@androidx.annotation.OptIn(UnstableApi::class)
-@Composable
-fun EnhancedVideoPlayer(
-    resourceId: Int,
-    alwaysRepeat: Boolean = true,
-    zoomToFit: Boolean = true,
-    enableImmersiveMode: Boolean = true,
-    playImmediately: Boolean = true,
-    soundOff: Boolean = true,
-    disableControls: Boolean = false,
-    currentTimeTickInMs: Long = CURRENT_TIME_TICK_IN_MS,
-    controlsCustomization: ControlsCustomization = ControlsCustomization(),
-    settingsControlsCustomization: SettingsControlsCustomization = SettingsControlsCustomization(),
-    transformSeekIncrementRatio: (tapCount: Int) -> Long = { it -> it * DEFAULT_SEEK_TIME_MS }
-) {
-    val context = LocalContext.current
-    val mainPackagePath = "$MAIN_PACKAGE_PATH_PREFIX${context.packageName}/"
-
-    EnhancedVideoPlayer(
-        mediaItem = MediaItem.fromUri(
-            Uri.parse(mainPackagePath + resourceId.toString())
-        ),
-        alwaysRepeat = alwaysRepeat,
-        zoomToFit = zoomToFit,
-        enableImmersiveMode = enableImmersiveMode,
-        playImmediately = playImmediately,
-        soundOff = soundOff,
-        disableControls = disableControls,
-        currentTimeTickInMs = currentTimeTickInMs,
-        controlsCustomization = controlsCustomization,
-        settingsControlsCustomization = settingsControlsCustomization,
-        transformSeekIncrementRatio = { transformSeekIncrementRatio(it) }
-    )
-}
 
 @androidx.annotation.OptIn(UnstableApi::class)
 @Composable
