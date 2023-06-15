@@ -1,9 +1,7 @@
 package com.profusion.androidenhancedvideoplayer.components.playerOverlay
 
 import androidx.compose.foundation.layout.Box
-import androidx.compose.foundation.layout.IntrinsicSize
 import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
@@ -17,16 +15,16 @@ import com.profusion.androidenhancedvideoplayer.styling.Dimensions
 
 @Composable
 fun TopControls(
+    modifier: Modifier = Modifier,
     title: String? = null,
-    modifier: Modifier = Modifier
+    shouldShowContent: Boolean = true
 ) {
     Box(
         modifier = modifier
             .fillMaxWidth()
-            .height(IntrinsicSize.Min)
-            .padding(Dimensions.large)
+            .padding(horizontal = Dimensions.large)
     ) {
-        if (title != null) {
+        if (title != null && shouldShowContent) {
             Text(
                 text = title,
                 maxLines = 1,
@@ -34,7 +32,7 @@ fun TopControls(
                 style = MaterialTheme.typography.titleLarge.copy(
                     color = Color.White
                 ),
-                modifier = Modifier.align(Alignment.TopStart)
+                modifier = Modifier.align(Alignment.CenterStart)
             )
         }
     }

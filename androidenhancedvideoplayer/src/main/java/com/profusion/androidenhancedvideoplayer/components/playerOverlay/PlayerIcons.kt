@@ -137,3 +137,33 @@ fun RepeatIcon(modifier: Modifier = Modifier) {
         modifier = modifier.testTag("RepeatIcon")
     )
 }
+
+@Composable
+fun BrightnessLowIcon(modifier: Modifier = Modifier) {
+    Icon(
+        painter = painterResource(id = R.drawable.ic_brightness_low),
+        tint = Color.White,
+        contentDescription = stringResource(R.string.controls_brightness_low_description),
+        modifier = modifier.testTag("BrightnessLowIcon")
+    )
+}
+
+@Composable
+fun BrightnessHighIcon(modifier: Modifier = Modifier) {
+    Icon(
+        painter = painterResource(id = R.drawable.ic_brightness_high),
+        tint = Color.White,
+        contentDescription = stringResource(R.string.controls_brightness_high_description),
+        modifier = modifier.testTag("BrightnessHighIcon")
+    )
+}
+
+@Composable
+fun BrightnessMedIcon(modifier: Modifier = Modifier) {
+    Icon(
+        painter = painterResource(id = R.drawable.ic_brightness_med),
+        tint = Color.White,
+        contentDescription = stringResource(R.string.controls_brightness_med_description),
+        modifier = modifier.testTag("BrightnessMedIcon")
+    )
+}
