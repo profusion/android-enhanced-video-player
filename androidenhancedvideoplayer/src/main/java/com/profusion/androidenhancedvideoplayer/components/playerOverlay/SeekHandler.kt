@@ -25,8 +25,6 @@ import androidx.media3.exoplayer.ExoPlayer
 import com.profusion.androidenhancedvideoplayer.styling.Colors
 import com.profusion.androidenhancedvideoplayer.utils.JobsHolder
 import com.profusion.androidenhancedvideoplayer.utils.executeAfterTimeout
-import kotlin.math.max
-import kotlin.math.min
 
 private const val ICON_ANIMATION_DURATION_MS = 650
 private const val ICON_INITIAL_SCALE = 0.8f
@@ -73,7 +71,7 @@ fun SeekHandler(
                     forwardTapCount - 1
                 )
             val timeToSeek = exoPlayer.currentPosition + incrementTime
-            exoPlayer.seekTo(min(exoPlayer.duration, timeToSeek))
+            exoPlayer.seekTo(timeToSeek)
         }
     }
 
@@ -84,7 +82,7 @@ fun SeekHandler(
                     rewindTapCount - 1
                 )
             val timeToSeek = exoPlayer.currentPosition - incrementTime
-            exoPlayer.seekTo(max(0, timeToSeek))
+            exoPlayer.seekTo(timeToSeek)
         }
     }
 
