@@ -33,10 +33,11 @@ import com.profusion.androidenhancedvideoplayer.utils.setLandscape
 import com.profusion.androidenhancedvideoplayer.utils.setNavigationBarVisibility
 import com.profusion.androidenhancedvideoplayer.utils.setPortrait
 import com.profusion.androidenhancedvideoplayer.utils.setStatusBarVisibility
+import kotlinx.coroutines.delay
 
 private const val MAIN_PACKAGE_PATH_PREFIX = "android.resource://"
 private const val CURRENT_TIME_TICK_IN_MS = 50L
-
+private const val PLAYER_CONTROLS_VISIBILITY_DURATION_IN_MS = 3000L // 3 seconds
 private const val DEFAULT_SEEK_TIME_MS = 10 * 1000L // 10 seconds
 
 @androidx.annotation.OptIn(UnstableApi::class)
@@ -85,6 +86,7 @@ fun EnhancedVideoPlayer(
     soundOff: Boolean = true,
     disableControls: Boolean = false,
     currentTimeTickInMs: Long = CURRENT_TIME_TICK_IN_MS,
+    controlsVisibilityDurationInMs: Long = PLAYER_CONTROLS_VISIBILITY_DURATION_IN_MS,
     controlsCustomization: ControlsCustomization = ControlsCustomization(),
     transformSeekIncrementRatio: (tapCount: Int) -> Long = { it -> it * DEFAULT_SEEK_TIME_MS },
     settingsControlsCustomization: SettingsControlsCustomization = SettingsControlsCustomization()
@@ -150,6 +152,13 @@ fun EnhancedVideoPlayer(
         enabled = isPlaying && isControlsVisible
     ) {
         currentTime = exoPlayer.currentPosition
+    }
+
+    LaunchedEffect(isControlsVisible) {
+        if (isControlsVisible && controlsVisibilityDurationInMs > 0) {
+            delay(controlsVisibilityDurationInMs)
+            isControlsVisible = false
+        }
     }
 
     Box(
