@@ -5,12 +5,12 @@ import androidx.compose.runtime.Composable
 
 @Composable
 fun TimeBarComponent(
-    currentTime: Long,
+    currentTime: () -> Long,
     duration: Long,
     onTimeChange: (Long) -> Unit
 ) {
     Slider(
-        value = currentTime.toFloat().coerceIn(0f, Float.MAX_VALUE),
+        value = currentTime().toFloat().coerceIn(0f, Float.MAX_VALUE),
         onValueChange = {
             onTimeChange(it.toLong().coerceIn(0, Long.MAX_VALUE))
         },

@@ -30,7 +30,7 @@ fun BottomControls(
     isFullScreen: Boolean,
     speed: Float,
     isLoopEnabled: Boolean,
-    currentTime: Long,
+    currentTime: () -> Long,
     totalDuration: Long,
     onSpeedSelected: (Float) -> Unit,
     onIsLoopEnabledSelected: (Boolean) -> Unit,
@@ -57,7 +57,7 @@ fun BottomControls(
             var isSettingsOpen by rememberSaveable { mutableStateOf(false) }
 
             Text(
-                text = formatElapsedTime(currentTime, totalDuration),
+                text = formatElapsedTime(currentTime(), totalDuration),
                 style = MaterialTheme.typography.titleMedium.copy(
                     color = Color.White
                 ),
