@@ -24,7 +24,7 @@ private const val TEXT_MAX_LINES = 2
 fun SeekClickableArea(
     modifier: Modifier = Modifier,
     scaleAnimation: Float,
-    tapCount: Int,
+    isSeeking: Boolean,
     disableSeekClick: Boolean = false,
     onSeekSingleTap: () -> Unit,
     onSeekDoubleTap: () -> Unit,
@@ -32,33 +32,26 @@ fun SeekClickableArea(
     getSeekTime: () -> Int,
     seekIcon: @Composable (modifier: Modifier) -> Unit
 ) {
-    val isTapCountGreaterThanZero = tapCount > 0
     Box(
         modifier = Modifier
             .fillMaxHeight()
-            .pointerInput(tapCount, disableSeekClick) {
+            .pointerInput(isSeeking, disableSeekClick) {
                 detectTapGestures(
-                    onTap = if (isTapCountGreaterThanZero) {
-                        if (disableSeekClick) {
-                            null
-                        } else { { onSeekSingleTap() } }
-                    } else {
-                        { checkIfCanToggleIsControlsVisible() }
+                    onTap = when {
+                        !isSeeking -> { { checkIfCanToggleIsControlsVisible() } }
+                        !disableSeekClick -> { { onSeekSingleTap() } }
+                        else -> null
                     },
-                    onDoubleTap = if (isTapCountGreaterThanZero) { null } else {
-                        if (disableSeekClick) {
-                            null
-                        } else {
-                            { onSeekDoubleTap() }
-                        }
-                    }
+                    onDoubleTap = if (!isSeeking && !disableSeekClick) {
+                        { onSeekDoubleTap() }
+                    } else { null }
                 )
             }
             .testTag("SeekClickableArea")
             .then(modifier),
         contentAlignment = Alignment.Center
     ) {
-        if (isTapCountGreaterThanZero) {
+        if (isSeeking) {
             val timeLabel = getSeekTime()
             Column(horizontalAlignment = Alignment.CenterHorizontally) {
                 seekIcon(modifier = Modifier.scale(scaleAnimation))
