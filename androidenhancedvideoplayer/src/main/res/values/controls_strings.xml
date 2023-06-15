@@ -1,4 +1,7 @@
 <resources>
+    <string name="controls_brightness_high_description">High Brightness</string>
+    <string name="controls_brightness_low_description">Low Brightness</string>
+    <string name="controls_brightness_med_description">Med Brightness</string>
     <string name="controls_exit_fullscreen_description">Exit Fullscreen</string>
     <string name="controls_forward_description">Forward</string>
     <string name="controls_fullscreen_description">Fullscreen</string>
