@@ -10,6 +10,7 @@ import androidx.compose.foundation.layout.safeDrawingPadding
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalConfiguration
+import androidx.compose.ui.platform.LocalContext
 import androidx.core.view.WindowCompat
 import androidx.media3.common.MediaItem
 import com.example.androidenhancedvideoplayer.components.RecommendedVideosComponent
@@ -99,8 +100,12 @@ fun VideoFromMSSUri() {
 
 @Composable
 fun VideoFromResources() {
+    val context = LocalContext.current
+
     EnhancedVideoPlayer(
-        resourceId = R.raw.spinning_earth,
+        mediaItem = MediaItem.fromUri(
+            "android.resource://${context.packageName}/raw/spinning_earth"
+        ),
         zoomToFit = false,
         enableImmersiveMode = true,
         disableControls = false,
