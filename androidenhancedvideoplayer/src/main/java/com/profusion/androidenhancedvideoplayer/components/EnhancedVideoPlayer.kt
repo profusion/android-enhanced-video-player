@@ -85,10 +85,12 @@ fun EnhancedVideoPlayer(
         }
     }
 
-    if (enableImmersiveMode) {
-        val shouldShowSystemUi = !isFullScreen
-        context.setStatusBarVisibility(shouldShowSystemUi)
-        context.setNavigationBarVisibility(shouldShowSystemUi)
+    LaunchedEffect(enableImmersiveMode, isFullScreen) {
+        if (enableImmersiveMode) {
+            val shouldShowSystemUi = !isFullScreen
+            context.setStatusBarVisibility(shouldShowSystemUi)
+            context.setNavigationBarVisibility(shouldShowSystemUi)
+        }
     }
 
     fun setControlsVisibility(visible: Boolean) {
