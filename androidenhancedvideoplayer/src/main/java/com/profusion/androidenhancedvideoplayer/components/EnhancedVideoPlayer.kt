@@ -117,8 +117,10 @@ fun EnhancedVideoPlayer(
         currentTime = exoPlayer.currentPosition
     }
 
-    LaunchedEffect(isControlsVisible) {
-        if (isControlsVisible && controlsVisibilityDurationInMs > 0) {
+    LaunchedEffect(isControlsVisible, isPlaying) {
+        if (
+            isControlsVisible && isPlaying && controlsVisibilityDurationInMs > 0
+        ) {
             delay(controlsVisibilityDurationInMs)
             isControlsVisible = false
         }
