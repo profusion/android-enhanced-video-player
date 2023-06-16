@@ -1,4 +1,5 @@
 import micromatch from 'micromatch';
+import path from 'path';
 
 const kotlinExtension = '*.kt';
 const kotlinFilePattern = '**/' + kotlinExtension;
@@ -7,20 +8,16 @@ const jsFilePattern = '**/*.(ts|tsx|js|jsx|mjs)';
 function handleKotlinFiles(allStagedFiles) {
   const matches = micromatch(allStagedFiles, [kotlinFilePattern]);
   const commands = [];
-  const networkFiles = '**/data/network/' + kotlinExtension;
-  const networkFilesMatches = micromatch(allStagedFiles, [networkFiles]);
 
   if (matches.length > 0) {
-    // Returns a single action for all kotlin files. This is an optimization
-    // to garantee that only a single gradle task is executed (which will lint
-    // all staged files at once).
-    commands.push('yarn lint-from-staged');
-  }
+    const relativeMatches = matches.map((match) =>
+      path.relative(process.cwd(), match),
+    );
 
-  // Running Auth tests (which are instrumented) is expensive, thus
-  // only run when the network package changes
-  if (networkFilesMatches.length > 0) {
-    commands.push('yarn auth-test');
+    const relativeMatchesString = relativeMatches.join('\n');
+    commands.push(
+      `yarn lint-fix -p . -PinternalKtlintGitFilter="\n${relativeMatchesString}\n"`,
+    );
   }
 
   return commands;
