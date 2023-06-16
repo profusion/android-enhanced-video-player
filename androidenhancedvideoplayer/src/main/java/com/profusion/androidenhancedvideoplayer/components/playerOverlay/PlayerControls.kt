@@ -28,19 +28,15 @@ fun PlayerControls(
     isPlaying: Boolean,
     isFullScreen: Boolean,
     hasEnded: Boolean,
-    speed: Float,
-    isLoopEnabled: Boolean,
     currentTime: () -> Long,
     totalDuration: Long,
     onPreviousClick: () -> Unit,
     onPauseToggle: () -> Unit,
     onNextClick: () -> Unit,
     onFullScreenToggle: () -> Unit,
-    onSpeedSelected: (Float) -> Unit,
-    onIsLoopEnabledSelected: (Boolean) -> Unit,
+    onSettingsToggle: () -> Unit,
     onSeekBarValueChange: (Long) -> Unit,
-    customization: ControlsCustomization,
-    settingsControlsCustomization: SettingsControlsCustomization
+    customization: ControlsCustomization
 ) {
     PlayerControlsScaffold(
         modifier = modifier.testTag("PlayerControlsParent"),
@@ -53,16 +49,12 @@ fun PlayerControls(
         bottomContent = {
             BottomControls(
                 isFullScreen = isFullScreen,
-                speed = speed,
-                isLoopEnabled = isLoopEnabled,
                 currentTime = currentTime,
                 totalDuration = totalDuration,
                 onFullScreenToggle = onFullScreenToggle,
-                onSpeedSelected = onSpeedSelected,
-                onIsLoopEnabledSelected = onIsLoopEnabledSelected,
+                onSettingsToggle = onSettingsToggle,
                 onSeekBarValueChange = onSeekBarValueChange,
-                customization = customization,
-                settingsControlsCustomization = settingsControlsCustomization
+                customization = customization
             )
         }
     ) {
@@ -87,18 +79,14 @@ private fun PreviewPlayerControls() {
         isPlaying = true,
         hasEnded = false,
         isFullScreen = false,
-        speed = 1f,
-        isLoopEnabled = false,
         currentTime = { 0L },
         totalDuration = 0L,
         onPreviousClick = {},
         onPauseToggle = {},
         onNextClick = {},
         onFullScreenToggle = {},
-        onSpeedSelected = {},
-        onIsLoopEnabledSelected = {},
+        onSettingsToggle = {},
         onSeekBarValueChange = {},
-        customization = ControlsCustomization(),
-        settingsControlsCustomization = SettingsControlsCustomization()
+        customization = ControlsCustomization()
     )
 }

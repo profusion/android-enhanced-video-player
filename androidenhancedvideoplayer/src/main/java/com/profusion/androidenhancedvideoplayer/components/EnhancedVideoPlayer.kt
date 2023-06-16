@@ -6,7 +6,9 @@ import androidx.compose.animation.core.*
 import androidx.compose.foundation.*
 import androidx.compose.foundation.layout.*
 import androidx.compose.material.*
+import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.runtime.*
+import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.*
@@ -25,6 +27,7 @@ import androidx.media3.ui.PlayerView
 import com.profusion.androidenhancedvideoplayer.components.playerOverlay.ControlsCustomization
 import com.profusion.androidenhancedvideoplayer.components.playerOverlay.PlayerControls
 import com.profusion.androidenhancedvideoplayer.components.playerOverlay.SeekHandler
+import com.profusion.androidenhancedvideoplayer.components.playerOverlay.Settings
 import com.profusion.androidenhancedvideoplayer.components.playerOverlay.SettingsControlsCustomization
 import com.profusion.androidenhancedvideoplayer.utils.TimeoutEffect
 import com.profusion.androidenhancedvideoplayer.utils.fillMaxSizeOnLandscape
@@ -38,6 +41,7 @@ private const val CURRENT_TIME_TICK_IN_MS = 50L
 private const val PLAYER_CONTROLS_VISIBILITY_DURATION_IN_MS = 3000L // 3 seconds
 private const val DEFAULT_SEEK_TIME_MS = 10 * 1000L // 10 seconds
 
+@OptIn(ExperimentalMaterial3Api::class)
 @androidx.annotation.OptIn(UnstableApi::class)
 @Composable
 fun EnhancedVideoPlayer(
@@ -79,6 +83,7 @@ fun EnhancedVideoPlayer(
         mutableStateOf(exoPlayer.currentMediaItem?.mediaMetadata?.title?.toString())
     }
     val isFullScreen = orientation == Configuration.ORIENTATION_LANDSCAPE
+    var isSettingsOpen by rememberSaveable { mutableStateOf(false) }
 
     if (enableImmersiveMode) {
         val shouldShowSystemUi = !isFullScreen
@@ -161,46 +166,49 @@ fun EnhancedVideoPlayer(
                     setControlsVisibility = ::setControlsVisibility,
                     transformSeekIncrementRatio = transformSeekIncrementRatio
                 )
+                PlayerControls(
+                    title = title,
+                    isVisible = isControlsVisible,
+                    isPlaying = isPlaying,
+                    isFullScreen = isFullScreen,
+                    hasEnded = hasEnded,
+                    totalDuration = totalDuration,
+                    currentTime = { currentTime },
+                    onPreviousClick = exoPlayer::seekToPrevious,
+                    onNextClick = exoPlayer::seekToNext,
+                    onPauseToggle = when {
+                        hasEnded -> exoPlayer::seekToDefaultPosition
+                        isPlaying -> exoPlayer::pause
+                        else -> exoPlayer::play
+                    },
+                    onFullScreenToggle = {
+                        when (isFullScreen) {
+                            true -> context.setPortrait()
+                            false -> context.setLandscape()
+                        }
+                    },
+                    onSettingsToggle = { isSettingsOpen = !isSettingsOpen },
+                    onSeekBarValueChange = exoPlayer::seekTo,
+                    customization = controlsCustomization
+                )
             }
 
-            PlayerControls(
-                title = title,
-                isVisible = isControlsVisible,
-                isPlaying = isPlaying,
-                isFullScreen = isFullScreen,
-                hasEnded = hasEnded,
-                speed = speed,
-                isLoopEnabled = loop,
-                totalDuration = totalDuration,
-                currentTime = { currentTime },
-                onPreviousClick = exoPlayer::seekToPrevious,
-                onNextClick = exoPlayer::seekToNext,
-                onPauseToggle = when {
-                    hasEnded -> exoPlayer::seekToDefaultPosition
-                    isPlaying -> exoPlayer::pause
-                    else -> exoPlayer::play
-                },
-                onFullScreenToggle = {
-                    when (isFullScreen) {
-                        true -> context.setPortrait()
-                        false -> context.setLandscape()
-                    }
-                },
-                onSpeedSelected = exoPlayer::setPlaybackSpeed,
-                onIsLoopEnabledSelected = { value ->
-                    exoPlayer.repeatMode = if (value) {
-                        ExoPlayer.REPEAT_MODE_ALL
-                    } else {
-                        ExoPlayer.REPEAT_MODE_OFF
-                    }
-                },
-                onSeekBarValueChange = exoPlayer::seekTo,
-                customization = controlsCustomization,
-                settingsControlsCustomization = settingsControlsCustomization,
-                modifier = Modifier
-                    .matchParentSize()
-                    .testTag("PlayerControlsParent")
-            )
+            if (isSettingsOpen) {
+                Settings(
+                    onDismissRequest = { isSettingsOpen = false },
+                    speed = speed,
+                    isLoopEnabled = loop,
+                    onSpeedSelected = exoPlayer::setPlaybackSpeed,
+                    onIsLoopEnabledSelected = { value ->
+                        exoPlayer.repeatMode = if (value) {
+                            ExoPlayer.REPEAT_MODE_ALL
+                        } else {
+                            ExoPlayer.REPEAT_MODE_OFF
+                        }
+                    },
+                    customization = settingsControlsCustomization
+                )
+            }
         }
     }
 }
