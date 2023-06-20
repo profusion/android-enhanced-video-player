@@ -7,6 +7,7 @@ import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.safeDrawingPadding
+import androidx.compose.runtime.collectAsState
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalConfiguration
 import androidx.core.view.WindowCompat
@@ -18,9 +19,11 @@ import com.example.androidenhancedvideoplayer.utils.ExampleUrl
 import com.example.androidenhancedvideoplayer.utils.fillMaxSizeOnLandscape
 import com.profusion.androidenhancedvideoplayer.components.EnhancedVideoPlayer
 import com.profusion.androidenhancedvideoplayer.components.playerOverlay.SettingsControlsCustomization
+import kotlinx.coroutines.flow.MutableStateFlow
 
 class MainActivity : ComponentActivity() {
     private lateinit var exoPlayer: ExoPlayer
+    private val isInPictureInPictureMode: MutableStateFlow<Boolean> = MutableStateFlow(false)
 
     private fun initializeExoPlayer() {
         exoPlayer = ExoPlayer
@@ -47,6 +50,8 @@ class MainActivity : ComponentActivity() {
             AndroidEnhancedVideoPlayerTheme {
                 val orientation = LocalConfiguration.current.orientation
 
+                val isInPictureInPictureModeState = isInPictureInPictureMode.collectAsState()
+
                 Column(
                     modifier = Modifier
                         .fillMaxWidth()
@@ -61,6 +66,7 @@ class MainActivity : ComponentActivity() {
                             exoPlayer = exoPlayer,
                             zoomToFit = false,
                             enableImmersiveMode = true,
+                            disableControls = isInPictureInPictureModeState.value,
                             settingsControlsCustomization = SettingsControlsCustomization(
                                 speeds = listOf(0.5f, 1f, 2f, 4f)
                             )
@@ -70,5 +76,25 @@ class MainActivity : ComponentActivity() {
                 }
             }
         }
+    }
+
+    override fun onUserLeaveHint() {
+        super.onUserLeaveHint()
+
+        if (exoPlayer.isPlaying) {
+            enterPictureInPictureMode(
+                android.app.PictureInPictureParams.Builder()
+                    .setAspectRatio(android.util.Rational(16, 9))
+                    .build()
+            )
+        }
+    }
+
+    override fun onPictureInPictureModeChanged(
+        value: Boolean,
+        newConfig: android.content.res.Configuration
+    ) {
+        super.onPictureInPictureModeChanged(value, newConfig)
+        isInPictureInPictureMode.value = value
     }
 }
