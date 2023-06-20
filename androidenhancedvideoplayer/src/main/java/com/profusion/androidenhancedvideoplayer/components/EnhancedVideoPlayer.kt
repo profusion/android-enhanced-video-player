@@ -18,7 +18,6 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.unit.*
 import androidx.compose.ui.viewinterop.AndroidView
-import androidx.media3.common.MediaItem
 import androidx.media3.common.Player
 import androidx.media3.common.util.UnstableApi
 import androidx.media3.exoplayer.ExoPlayer
@@ -45,12 +44,9 @@ private const val DEFAULT_SEEK_TIME_MS = 10 * 1000L // 10 seconds
 @androidx.annotation.OptIn(UnstableApi::class)
 @Composable
 fun EnhancedVideoPlayer(
-    mediaItem: MediaItem,
-    alwaysRepeat: Boolean = true,
+    exoPlayer: ExoPlayer,
     zoomToFit: Boolean = true,
     enableImmersiveMode: Boolean = true,
-    playImmediately: Boolean = true,
-    soundOff: Boolean = true,
     disableControls: Boolean = false,
     currentTimeTickInMs: Long = CURRENT_TIME_TICK_IN_MS,
     controlsVisibilityDurationInMs: Long = PLAYER_CONTROLS_VISIBILITY_DURATION_IN_MS,
@@ -59,19 +55,8 @@ fun EnhancedVideoPlayer(
     settingsControlsCustomization: SettingsControlsCustomization = SettingsControlsCustomization()
 ) {
     val context = LocalContext.current
-
     val orientation = LocalConfiguration.current.orientation
 
-    val exoPlayer = remember {
-        ExoPlayer.Builder(context)
-            .build().apply {
-                setMediaItem(mediaItem)
-                volume = if (soundOff) 0f else 1f
-                repeatMode = if (alwaysRepeat) Player.REPEAT_MODE_ALL else Player.REPEAT_MODE_OFF
-                playWhenReady = playImmediately
-                prepare()
-            }
-    }
     var isPlaying by remember { mutableStateOf(exoPlayer.isPlaying) }
     var hasEnded by remember { mutableStateOf(exoPlayer.playbackState == ExoPlayer.STATE_ENDED) }
     var isControlsVisible by remember { mutableStateOf(false) }

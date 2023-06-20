@@ -7,4 +7,5 @@ object ExampleUrl {
     const val HLS = "https://demo-streaming.gcdn.co/videos/676_YJHUNNocCsrjiCDx/master.m3u8"
     const val MP4 = "https://commondatastorage.googleapis.com/" +
         "gtv-videos-bucket/sample/ElephantsDream.mp4"
+    const val RESOURCE = "android.resource://com.example.teste/raw/spinning_earth"
 }
