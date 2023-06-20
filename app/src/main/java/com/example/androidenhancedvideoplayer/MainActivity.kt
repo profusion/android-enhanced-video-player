@@ -7,12 +7,11 @@ import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.safeDrawingPadding
-import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalConfiguration
-import androidx.compose.ui.platform.LocalContext
 import androidx.core.view.WindowCompat
 import androidx.media3.common.MediaItem
+import androidx.media3.exoplayer.ExoPlayer
 import com.example.androidenhancedvideoplayer.components.RecommendedVideosComponent
 import com.example.androidenhancedvideoplayer.ui.theme.AndroidEnhancedVideoPlayerTheme
 import com.example.androidenhancedvideoplayer.utils.ExampleUrl
@@ -21,12 +20,33 @@ import com.profusion.androidenhancedvideoplayer.components.EnhancedVideoPlayer
 import com.profusion.androidenhancedvideoplayer.components.playerOverlay.SettingsControlsCustomization
 
 class MainActivity : ComponentActivity() {
+    private lateinit var exoPlayer: ExoPlayer
+
+    private fun initializeExoPlayer() {
+        exoPlayer = ExoPlayer
+            .Builder(applicationContext)
+            .build()
+            .apply {
+                setMediaItem(MediaItem.fromUri(ExampleUrl.RESOURCE))
+                playWhenReady = true
+                prepare()
+            }
+    }
+
+    override fun onDestroy() {
+        super.onDestroy()
+        exoPlayer.release()
+    }
+
     override fun onCreate(savedInstanceState: Bundle?) {
         WindowCompat.setDecorFitsSystemWindows(window, false)
         super.onCreate(savedInstanceState)
+        initializeExoPlayer()
+
         setContent {
             AndroidEnhancedVideoPlayerTheme {
                 val orientation = LocalConfiguration.current.orientation
+
                 Column(
                     modifier = Modifier
                         .fillMaxWidth()
@@ -37,81 +57,18 @@ class MainActivity : ComponentActivity() {
                             .fillMaxSizeOnLandscape(orientation = orientation)
                             .fillMaxWidth()
                     ) {
-                        VideoFromMSSUri()
+                        EnhancedVideoPlayer(
+                            exoPlayer = exoPlayer,
+                            zoomToFit = false,
+                            enableImmersiveMode = true,
+                            settingsControlsCustomization = SettingsControlsCustomization(
+                                speeds = listOf(0.5f, 1f, 2f, 4f)
+                            )
+                        )
                     }
                     RecommendedVideosComponent()
                 }
             }
         }
     }
-}
-
-@Composable
-fun VideoFromURL() {
-    EnhancedVideoPlayer(
-        mediaItem = MediaItem.fromUri(ExampleUrl.MP4),
-        zoomToFit = false,
-        enableImmersiveMode = true,
-        alwaysRepeat = false,
-        settingsControlsCustomization = SettingsControlsCustomization(
-            speeds = listOf(0.5f, 1f, 2f, 4f)
-        )
-    )
-}
-
-@Composable
-fun VideoFromHLSUri() {
-    EnhancedVideoPlayer(
-        mediaItem = MediaItem.fromUri(ExampleUrl.HLS),
-        zoomToFit = false,
-        enableImmersiveMode = true,
-        alwaysRepeat = true,
-        settingsControlsCustomization = SettingsControlsCustomization(
-            speeds = listOf(0.5f, 1f, 2f, 4f)
-        )
-    )
-}
-
-@Composable
-fun VideoFromDASHUri() {
-    EnhancedVideoPlayer(
-        mediaItem = MediaItem.fromUri(ExampleUrl.DASH),
-        zoomToFit = false,
-        enableImmersiveMode = true,
-        alwaysRepeat = false,
-        settingsControlsCustomization = SettingsControlsCustomization(
-            speeds = listOf(0.5f, 1f, 2f, 4f)
-        )
-    )
-}
-
-@Composable
-fun VideoFromMSSUri() {
-    EnhancedVideoPlayer(
-        mediaItem = MediaItem.fromUri(ExampleUrl.MSS),
-        zoomToFit = false,
-        enableImmersiveMode = true,
-        alwaysRepeat = false,
-        settingsControlsCustomization = SettingsControlsCustomization(
-            speeds = listOf(0.5f, 1f, 2f, 4f)
-        )
-    )
-}
-
-@Composable
-fun VideoFromResources() {
-    val context = LocalContext.current
-
-    EnhancedVideoPlayer(
-        mediaItem = MediaItem.fromUri(
-            "android.resource://${context.packageName}/raw/spinning_earth"
-        ),
-        zoomToFit = false,
-        enableImmersiveMode = true,
-        disableControls = false,
-        alwaysRepeat = false,
-        settingsControlsCustomization = SettingsControlsCustomization(
-            speeds = listOf(0.5f, 1f, 2f, 4f)
-        )
-    )
 }
