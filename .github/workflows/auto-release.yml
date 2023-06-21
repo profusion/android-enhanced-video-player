@@ -1,0 +1,26 @@
+name: Auto Release
+
+on:
+  workflow_run:
+    workflows: [CI Android Enhanced Video Player]
+    types:
+      - completed
+    branches:
+      - main
+
+jobs:
+  auto-tag:
+    if: ${{ github.event.workflow_run.conclusion == 'success' }}
+
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+
+    steps:
+      - uses: actions/checkout@v3
+      - uses: profusion/action-autorelease@main
+        with:
+          properties_path: 'gradle.properties'
+          property_name: 'VERSION_NAME'
+          tag_prefix: 'v'
+          github_token: ${{ secrets.GITHUB_TOKEN }}
