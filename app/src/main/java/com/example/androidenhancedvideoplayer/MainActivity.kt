@@ -30,7 +30,7 @@ class MainActivity : ComponentActivity() {
             .Builder(applicationContext)
             .build()
             .apply {
-                setMediaItem(MediaItem.fromUri(ExampleUrl.RESOURCE))
+                setMediaItem(MediaItem.fromUri(ExampleUrl.HLS))
                 playWhenReady = true
                 prepare()
             }

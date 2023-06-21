@@ -1,5 +1,6 @@
 package com.profusion.androidenhancedvideoplayer.components.playerOverlay
 
+import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.IntrinsicSize
 import androidx.compose.foundation.layout.Row
@@ -28,7 +29,9 @@ fun BottomControls(
     totalDuration: Long,
     onSettingsToggle: () -> Unit,
     onFullScreenToggle: () -> Unit,
+    timeBarMutableInteractionSource: MutableInteractionSource,
     onSeekBarValueChange: (Long) -> Unit,
+    onSeekBarValueFinished: () -> Unit,
     customization: ControlsCustomization
 ) {
     Column(
@@ -41,7 +44,9 @@ fun BottomControls(
             TimeBarComponent(
                 currentTime = currentTime,
                 duration = totalDuration,
-                onTimeChange = onSeekBarValueChange
+                onTimeChange = onSeekBarValueChange,
+                onTimeChangeFinished = onSeekBarValueFinished,
+                interactionSource = timeBarMutableInteractionSource
             )
             Row(
                 verticalAlignment = Alignment.CenterVertically

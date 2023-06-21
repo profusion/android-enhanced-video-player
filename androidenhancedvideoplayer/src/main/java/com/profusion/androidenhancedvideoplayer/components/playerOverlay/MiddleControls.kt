@@ -16,6 +16,7 @@ fun MiddleControls(
     modifier: Modifier = Modifier,
     shouldShowContent: Boolean = true,
     isPlaying: Boolean,
+    isBuffering: Boolean,
     isFullScreen: Boolean,
     hasEnded: Boolean,
     customization: ControlsCustomization,
@@ -52,6 +53,7 @@ fun MiddleControls(
                     when {
                         hasEnded -> customization.replayIconContent()
                         isPlaying -> customization.pauseIconContent()
+                        isBuffering -> customization.bufferingContent()
                         else -> customization.playIconContent()
                     }
                 }

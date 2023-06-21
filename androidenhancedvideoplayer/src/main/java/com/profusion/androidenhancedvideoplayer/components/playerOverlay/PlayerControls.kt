@@ -1,6 +1,7 @@
 package com.profusion.androidenhancedvideoplayer.components.playerOverlay
 
 import androidx.compose.foundation.interaction.MutableInteractionSource
+import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.Stable
 import androidx.compose.ui.Modifier
@@ -12,6 +13,7 @@ data class ControlsCustomization(
     val previousIconContent: @Composable () -> Unit = { PreviousIcon() },
     val playIconContent: @Composable () -> Unit = { PlayIcon() },
     val pauseIconContent: @Composable () -> Unit = { PauseIcon() },
+    val bufferingContent: @Composable () -> Unit = { CircularProgressIndicator() },
     val replayIconContent: @Composable () -> Unit = { ReplayIcon() },
     val nextIconContent: @Composable () -> Unit = { NextIcon() },
     val fullScreenIconContent: @Composable () -> Unit = { FullScreenIcon() },
@@ -30,10 +32,12 @@ fun PlayerControls(
     title: String? = null,
     isVisible: Boolean,
     isPlaying: Boolean,
+    isBuffering: Boolean,
     isFullScreen: Boolean,
     isBrightnessSliderDragged: Boolean,
     hasEnded: Boolean,
     brightnessMutableInteractionSource: MutableInteractionSource,
+    timeBarMutableInteractionSource: MutableInteractionSource,
     currentTime: () -> Long,
     totalDuration: Long,
     onPreviousClick: () -> Unit,
@@ -42,6 +46,7 @@ fun PlayerControls(
     onFullScreenToggle: () -> Unit,
     onSettingsToggle: () -> Unit,
     onSeekBarValueChange: (Long) -> Unit,
+    onSeekBarValueFinished: () -> Unit,
     customization: ControlsCustomization
 ) {
     PlayerControlsScaffold(
@@ -65,7 +70,9 @@ fun PlayerControls(
                 totalDuration = totalDuration,
                 onFullScreenToggle = onFullScreenToggle,
                 onSettingsToggle = onSettingsToggle,
+                timeBarMutableInteractionSource = timeBarMutableInteractionSource,
                 onSeekBarValueChange = onSeekBarValueChange,
+                onSeekBarValueFinished = onSeekBarValueFinished,
                 customization = customization
             )
         }
@@ -74,6 +81,7 @@ fun PlayerControls(
             modifier = it,
             shouldShowContent = !isBrightnessSliderDragged,
             isPlaying = isPlaying,
+            isBuffering = isBuffering,
             isFullScreen = isFullScreen,
             hasEnded = hasEnded,
             customization = customization,
@@ -104,6 +112,9 @@ private fun PreviewPlayerControls() {
         onFullScreenToggle = {},
         onSettingsToggle = {},
         onSeekBarValueChange = {},
-        customization = ControlsCustomization()
+        onSeekBarValueFinished = {},
+        customization = ControlsCustomization(),
+        timeBarMutableInteractionSource = MutableInteractionSource(),
+        isBuffering = false
     )
 }
