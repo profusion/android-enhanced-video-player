@@ -63,6 +63,9 @@ fun EnhancedVideoPlayer(
     val orientation = LocalConfiguration.current.orientation
 
     var isPlaying by remember { mutableStateOf(exoPlayer.isPlaying) }
+    var isBuffering by remember {
+        mutableStateOf(exoPlayer.playbackState == ExoPlayer.STATE_BUFFERING)
+    }
     var hasEnded by remember { mutableStateOf(exoPlayer.playbackState == ExoPlayer.STATE_ENDED) }
     var isControlsVisible by remember { mutableStateOf(false) }
     var speed by remember { mutableStateOf(exoPlayer.playbackParameters.speed) }
@@ -75,6 +78,8 @@ fun EnhancedVideoPlayer(
 
     val brightnessMutableInteractionSource = remember { MutableInteractionSource() }
     val isBrightnessSliderDragged by brightnessMutableInteractionSource.collectIsDraggedAsState()
+    val timeBarMutableInteractionSource = remember { MutableInteractionSource() }
+    val isTimeBarDragged by timeBarMutableInteractionSource.collectIsDraggedAsState()
 
     val isFullScreen = orientation == Configuration.ORIENTATION_LANDSCAPE
     var isSettingsOpen by rememberSaveable { mutableStateOf(false) }
@@ -101,6 +106,7 @@ fun EnhancedVideoPlayer(
         val listener = object : Player.Listener {
             override fun onEvents(player: Player, events: Player.Events) {
                 isPlaying = player.isPlaying
+                isBuffering = player.playbackState == ExoPlayer.STATE_BUFFERING
                 hasEnded = player.playbackState == ExoPlayer.STATE_ENDED
                 speed = player.playbackParameters.speed
                 title = player.mediaMetadata.title?.toString()
@@ -114,6 +120,12 @@ fun EnhancedVideoPlayer(
 
         onDispose {
             exoPlayer.removeListener(listener)
+        }
+    }
+
+    LaunchedEffect(isTimeBarDragged) {
+        if (isTimeBarDragged) {
+            exoPlayer.pause()
         }
     }
 
@@ -175,10 +187,12 @@ fun EnhancedVideoPlayer(
                     title = title,
                     isVisible = isControlsVisible,
                     isPlaying = isPlaying,
+                    isBuffering = isBuffering,
                     isFullScreen = isFullScreen,
                     isBrightnessSliderDragged = isBrightnessSliderDragged,
                     hasEnded = hasEnded,
                     brightnessMutableInteractionSource = brightnessMutableInteractionSource,
+                    timeBarMutableInteractionSource = timeBarMutableInteractionSource,
                     totalDuration = totalDuration,
                     currentTime = { currentTime },
                     onPreviousClick = exoPlayer::seekToPrevious,
@@ -195,7 +209,11 @@ fun EnhancedVideoPlayer(
                         }
                     },
                     onSettingsToggle = { isSettingsOpen = !isSettingsOpen },
-                    onSeekBarValueChange = exoPlayer::seekTo,
+                    onSeekBarValueChange = { currentTime = it },
+                    onSeekBarValueFinished = {
+                        exoPlayer.seekTo(currentTime)
+                        exoPlayer.play()
+                    },
                     customization = controlsCustomization
                 )
             }
