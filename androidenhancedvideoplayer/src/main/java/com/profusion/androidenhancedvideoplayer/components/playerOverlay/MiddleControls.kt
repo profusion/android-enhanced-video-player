@@ -18,6 +18,7 @@ fun MiddleControls(
     isPlaying: Boolean,
     isBuffering: Boolean,
     isFullScreen: Boolean,
+    isTimeBarDragged: Boolean,
     hasEnded: Boolean,
     customization: ControlsCustomization,
     brightnessMutableInteractionSource: MutableInteractionSource,
@@ -30,12 +31,15 @@ fun MiddleControls(
             .fillMaxWidth(),
         contentAlignment = Alignment.Center
     ) {
-        BrightnessControl(
-            modifier = Modifier.align(Alignment.CenterStart),
-            isFullScreen = isFullScreen,
-            customization = customization,
-            brightnessMutableInteractionSource = brightnessMutableInteractionSource
-        )
+        if (!isTimeBarDragged) {
+            BrightnessControl(
+                modifier = Modifier.align(Alignment.CenterStart),
+                isFullScreen = isFullScreen,
+                customization = customization,
+                brightnessMutableInteractionSource = brightnessMutableInteractionSource
+            )
+        }
+
         if (shouldShowContent) {
             Row(
                 horizontalArrangement = Arrangement.SpaceEvenly,

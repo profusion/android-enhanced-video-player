@@ -35,6 +35,7 @@ fun PlayerControls(
     isBuffering: Boolean,
     isFullScreen: Boolean,
     isBrightnessSliderDragged: Boolean,
+    isTimeBarDragged: Boolean,
     hasEnded: Boolean,
     brightnessMutableInteractionSource: MutableInteractionSource,
     timeBarMutableInteractionSource: MutableInteractionSource,
@@ -47,6 +48,7 @@ fun PlayerControls(
     onFullScreenToggle: () -> Unit,
     onSettingsToggle: () -> Unit,
     onSeekBarValueFinished: (Long) -> Unit,
+    onSeekBarValueChange: (Long) -> Unit,
     customization: ControlsCustomization
 ) {
     PlayerControlsScaffold(
@@ -73,13 +75,15 @@ fun PlayerControls(
                 onSettingsToggle = onSettingsToggle,
                 timeBarMutableInteractionSource = timeBarMutableInteractionSource,
                 onSeekBarValueFinished = onSeekBarValueFinished,
+                onSeekBarValueChange = onSeekBarValueChange,
                 customization = customization
             )
         }
     ) {
         MiddleControls(
             modifier = it,
-            shouldShowContent = !isBrightnessSliderDragged,
+            shouldShowContent = !isBrightnessSliderDragged && !isTimeBarDragged,
+            isTimeBarDragged = isTimeBarDragged,
             isPlaying = isPlaying,
             isBuffering = isBuffering,
             isFullScreen = isFullScreen,
@@ -102,6 +106,7 @@ private fun PreviewPlayerControls() {
         isPlaying = true,
         hasEnded = false,
         isBrightnessSliderDragged = false,
+        isTimeBarDragged = false,
         isFullScreen = false,
         currentTime = { 0L },
         bufferedPosition = { 50L },
@@ -113,6 +118,7 @@ private fun PreviewPlayerControls() {
         onFullScreenToggle = {},
         onSettingsToggle = {},
         onSeekBarValueFinished = {},
+        onSeekBarValueChange = {},
         customization = ControlsCustomization(),
         timeBarMutableInteractionSource = MutableInteractionSource(),
         isBuffering = false

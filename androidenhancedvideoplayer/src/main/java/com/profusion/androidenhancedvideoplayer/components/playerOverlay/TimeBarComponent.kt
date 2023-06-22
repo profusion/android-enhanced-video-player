@@ -18,6 +18,7 @@ fun TimeBarComponent(
     bufferedPosition: () -> Long,
     duration: Long,
     onTimeChangeFinished: (Long) -> Unit,
+    onTimeChange: (Long) -> Unit,
     interactionSource: MutableInteractionSource
 ) {
     val isTimeBarDragged by interactionSource.collectIsDraggedAsState()
@@ -38,7 +39,10 @@ fun TimeBarComponent(
         )
         Slider(
             value = if (isTimeBarDragged) sliderValue else currentTime().toFloat(),
-            onValueChange = { sliderValue = it },
+            onValueChange = {
+                sliderValue = it
+                onTimeChange(it.toLong())
+            },
             onValueChangeFinished = {
                 onTimeChangeFinished(sliderValue.toLong())
             },

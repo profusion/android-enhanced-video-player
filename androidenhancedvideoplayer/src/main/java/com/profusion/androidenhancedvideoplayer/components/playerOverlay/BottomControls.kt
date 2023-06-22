@@ -8,7 +8,6 @@ import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.absolutePadding
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
-import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
@@ -32,13 +31,13 @@ fun BottomControls(
     onFullScreenToggle: () -> Unit,
     timeBarMutableInteractionSource: MutableInteractionSource,
     onSeekBarValueFinished: (Long) -> Unit,
+    onSeekBarValueChange: (Long) -> Unit,
     customization: ControlsCustomization
 ) {
     Column(
         modifier = modifier
             .fillMaxWidth()
             .height(IntrinsicSize.Min)
-            .padding(horizontal = Dimensions.small)
     ) {
         if (shouldShowContent) {
             TimeBarComponent(
@@ -46,6 +45,7 @@ fun BottomControls(
                 duration = totalDuration,
                 bufferedPosition = bufferedPosition,
                 onTimeChangeFinished = onSeekBarValueFinished,
+                onTimeChange = onSeekBarValueChange,
                 interactionSource = timeBarMutableInteractionSource
             )
             Row(
