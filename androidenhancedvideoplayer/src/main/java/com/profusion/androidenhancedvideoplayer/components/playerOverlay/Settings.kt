@@ -3,6 +3,8 @@ package com.profusion.androidenhancedvideoplayer.components.playerOverlay
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.items
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.ListItem
 import androidx.compose.material3.ModalBottomSheet
@@ -42,7 +44,7 @@ fun Settings(
     onIsLoopEnabledSelected: (Boolean) -> Unit,
     customization: SettingsControlsCustomization
 ) {
-    val sheetState = rememberModalBottomSheetState()
+    val sheetState = rememberModalBottomSheetState(skipPartiallyExpanded = true)
 
     ModalBottomSheet(
         onDismissRequest = onDismissRequest,
@@ -76,7 +78,7 @@ private fun <T>SettingsSelector(
     modifier: Modifier = Modifier
 ) {
     var isSelectorOpen by rememberSaveable { mutableStateOf(false) }
-    val sheetState = rememberModalBottomSheetState()
+    val sheetState = rememberModalBottomSheetState(skipPartiallyExpanded = true)
     val scope = rememberCoroutineScope()
 
     ListItem(
@@ -94,26 +96,28 @@ private fun <T>SettingsSelector(
             sheetState = sheetState,
             modifier = Modifier.testTag("${label}SettingsSelector")
         ) {
-            items.forEach { item ->
-                ListItem(
-                    headlineContent = { Text(text = item.toString()) },
-                    leadingContent = {
-                        val iconSize = Dimensions.xlarge
-                        if (item == value) {
-                            CheckIcon(
-                                modifier = Modifier.size(iconSize)
-                            )
-                        } else {
-                            Box(Modifier.size(iconSize))
+            LazyColumn {
+                items(items) { item ->
+                    ListItem(
+                        headlineContent = { Text(text = item.toString()) },
+                        leadingContent = {
+                            val iconSize = Dimensions.xlarge
+                            if (item == value) {
+                                CheckIcon(
+                                    modifier = Modifier.size(iconSize)
+                                )
+                            } else {
+                                Box(Modifier.size(iconSize))
+                            }
+                        },
+                        modifier = Modifier.clickable {
+                            onSelected(item)
+                            scope.launch { sheetState.hide() }.invokeOnCompletion {
+                                isSelectorOpen = false
+                            }
                         }
-                    },
-                    modifier = Modifier.clickable {
-                        onSelected(item)
-                        scope.launch { sheetState.hide() }.invokeOnCompletion {
-                            isSelectorOpen = false
-                        }
-                    }
-                )
+                    )
+                }
             }
         }
     }
