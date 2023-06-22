@@ -9,6 +9,7 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.safeDrawingPadding
 import androidx.compose.runtime.collectAsState
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.ImageBitmap
 import androidx.compose.ui.platform.LocalConfiguration
 import androidx.core.view.WindowCompat
 import androidx.media3.common.MediaItem
@@ -77,7 +78,8 @@ class MainActivity : ComponentActivity() {
                             disableControls = isInPictureInPictureModeState.value,
                             settingsControlsCustomization = SettingsControlsCustomization(
                                 speeds = listOf(0.5f, 1f, 2f, 4f)
-                            )
+                            ),
+                            previewThumbnailBuilder = { ImageBitmap(100, 70) }
                         )
                     }
                     RecommendedVideosComponent()

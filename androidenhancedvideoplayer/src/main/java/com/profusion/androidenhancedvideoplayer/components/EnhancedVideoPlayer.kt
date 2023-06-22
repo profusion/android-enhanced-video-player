@@ -35,6 +35,7 @@ import com.profusion.androidenhancedvideoplayer.components.playerOverlay.PlayerC
 import com.profusion.androidenhancedvideoplayer.components.playerOverlay.SeekHandler
 import com.profusion.androidenhancedvideoplayer.components.playerOverlay.Settings
 import com.profusion.androidenhancedvideoplayer.components.playerOverlay.SettingsControlsCustomization
+import com.profusion.androidenhancedvideoplayer.components.playerOverlay.TimeBarPreviewComponent
 import com.profusion.androidenhancedvideoplayer.utils.TimeoutEffect
 import com.profusion.androidenhancedvideoplayer.utils.TrackQualityAuto
 import com.profusion.androidenhancedvideoplayer.utils.TrackQualityItem
@@ -42,7 +43,10 @@ import com.profusion.androidenhancedvideoplayer.utils.TrackQualityItemListSaver
 import com.profusion.androidenhancedvideoplayer.utils.TrackQualityItemSaver
 import com.profusion.androidenhancedvideoplayer.utils.fillMaxSizeOnLandscape
 import com.profusion.androidenhancedvideoplayer.utils.generateTrackQualityOptions
+import com.profusion.androidenhancedvideoplayer.utils.getDeviceRealSizeDp
 import com.profusion.androidenhancedvideoplayer.utils.getSelectedTrackQualityItem
+import com.profusion.androidenhancedvideoplayer.utils.getTopDisplayCutoutDp
+import com.profusion.androidenhancedvideoplayer.utils.mapLongToIntRange
 import com.profusion.androidenhancedvideoplayer.utils.resetActivityBrightnessToDefault
 import com.profusion.androidenhancedvideoplayer.utils.seekIncrement
 import com.profusion.androidenhancedvideoplayer.utils.setLandscape
@@ -55,6 +59,13 @@ import kotlinx.coroutines.delay
 private const val CURRENT_TIME_TICK_IN_MS = 50L
 private const val PLAYER_CONTROLS_VISIBILITY_DURATION_IN_MS = 3000L // 3 seconds
 private const val DEFAULT_SEEK_TIME_MS = 10 * 1000L // 10 seconds
+private const val DEFAULT_THUMBNAIL_WIDTH = 100
+private const val DEFAULT_THUMBNAIL_HEIGHT = 70
+private const val PREVIEW_HORIZONTAL_PADDING = 10
+private const val INITIAL_PREVIEW_OFFSET = 0
+
+// references half the pointer width of the Slider composable
+private const val SLIDER_POINTER_HALF_WIDTH = 10
 
 @OptIn(ExperimentalMaterial3Api::class)
 @androidx.annotation.OptIn(UnstableApi::class)
@@ -68,10 +79,13 @@ fun EnhancedVideoPlayer(
     controlsVisibilityDurationInMs: Long = PLAYER_CONTROLS_VISIBILITY_DURATION_IN_MS,
     controlsCustomization: ControlsCustomization = ControlsCustomization(),
     transformSeekIncrementRatio: (tapCount: Int) -> Long = { it -> it * DEFAULT_SEEK_TIME_MS },
+    previewThumbnailBuilder: ((timeInMillis: Long) -> ImageBitmap)? = null,
     settingsControlsCustomization: SettingsControlsCustomization = SettingsControlsCustomization()
 ) {
     val context = LocalContext.current
-    val orientation = LocalConfiguration.current.orientation
+
+    val configuration = LocalConfiguration.current
+    val orientation = configuration.orientation
 
     var isPlaying by remember { mutableStateOf(exoPlayer.isPlaying) }
     var isBuffering by remember {
@@ -87,6 +101,11 @@ fun EnhancedVideoPlayer(
     var title by remember {
         mutableStateOf(exoPlayer.currentMediaItem?.mediaMetadata?.title?.toString())
     }
+    var currentImagePreview by remember {
+        mutableStateOf(ImageBitmap(DEFAULT_THUMBNAIL_WIDTH, DEFAULT_THUMBNAIL_HEIGHT))
+    }
+    var currentOffsetXPreview by remember { mutableStateOf(INITIAL_PREVIEW_OFFSET) }
+    var topDisplayCutout by rememberSaveable { mutableStateOf(context.getTopDisplayCutoutDp()) }
 
     val brightnessMutableInteractionSource = remember { MutableInteractionSource() }
     val isBrightnessSliderDragged by brightnessMutableInteractionSource.collectIsDraggedAsState()
@@ -129,10 +148,6 @@ fun EnhancedVideoPlayer(
             context.setStatusBarVisibility(shouldShowSystemUi)
             context.setNavigationBarVisibility(shouldShowSystemUi)
         }
-    }
-
-    fun setControlsVisibility(visible: Boolean) {
-        isControlsVisible = visible
     }
 
     DisposableEffect(context) {
@@ -179,6 +194,20 @@ fun EnhancedVideoPlayer(
         bufferedPosition = exoPlayer.bufferedPosition
     }
 
+    LaunchedEffect(isFullScreen) {
+        if (!isFullScreen) {
+            context.resetActivityBrightnessToDefault()
+        }
+    }
+
+    LaunchedEffect(enableImmersiveMode, isFullScreen) {
+        if (enableImmersiveMode) {
+            val shouldShowSystemUi = !isFullScreen
+            context.setStatusBarVisibility(shouldShowSystemUi)
+            context.setNavigationBarVisibility(shouldShowSystemUi)
+        }
+    }
+
     LaunchedEffect(isControlsVisible, isPlaying, isBrightnessSliderDragged, isTimeBarDragged) {
         if (
             isControlsVisible &&
@@ -190,6 +219,30 @@ fun EnhancedVideoPlayer(
             delay(controlsVisibilityDurationInMs)
             isControlsVisible = false
         }
+    }
+
+    fun getPreviewOffsetX(draggedTime: Long): Int {
+        val halfImage = currentImagePreview.width / 2
+        val cutout = if (isFullScreen) topDisplayCutout else 0
+        val screenWidth = context.getDeviceRealSizeDp().first
+        val maxOffsetX = screenWidth - currentImagePreview.width - cutout
+        val screenWidthRange =
+            SLIDER_POINTER_HALF_WIDTH..(screenWidth - SLIDER_POINTER_HALF_WIDTH) - cutout
+        val videoDurationRange = 0L..totalDuration
+
+        val mappedValue = mapLongToIntRange(
+            draggedTime,
+            videoDurationRange,
+            screenWidthRange
+        )
+        return (mappedValue - halfImage).coerceIn(
+            PREVIEW_HORIZONTAL_PADDING,
+            maxOffsetX - PREVIEW_HORIZONTAL_PADDING
+        )
+    }
+
+    fun setControlsVisibility(visible: Boolean) {
+        isControlsVisible = visible
     }
 
     Box(
@@ -233,6 +286,7 @@ fun EnhancedVideoPlayer(
                     isBuffering = isBuffering,
                     isFullScreen = isFullScreen,
                     isBrightnessSliderDragged = isBrightnessSliderDragged,
+                    isTimeBarDragged = isTimeBarDragged,
                     hasEnded = hasEnded,
                     brightnessMutableInteractionSource = brightnessMutableInteractionSource,
                     timeBarMutableInteractionSource = timeBarMutableInteractionSource,
@@ -256,6 +310,12 @@ fun EnhancedVideoPlayer(
                     onSeekBarValueFinished = { value ->
                         currentTime = value
                         exoPlayer.seekTo(value)
+                    },
+                    onSeekBarValueChange = {
+                        if (previewThumbnailBuilder != null) {
+                            currentOffsetXPreview = getPreviewOffsetX(it)
+                            currentImagePreview = previewThumbnailBuilder(it)
+                        }
                     },
                     customization = controlsCustomization
                 )
@@ -285,6 +345,12 @@ fun EnhancedVideoPlayer(
                     customization = settingsControlsCustomization
                 )
             }
+            TimeBarPreviewComponent(
+                modifier = Modifier.align(Alignment.BottomStart),
+                shouldShowPreview = isTimeBarDragged && previewThumbnailBuilder != null,
+                bitmap = currentImagePreview,
+                offsetX = currentOffsetXPreview
+            )
         }
     }
 }
