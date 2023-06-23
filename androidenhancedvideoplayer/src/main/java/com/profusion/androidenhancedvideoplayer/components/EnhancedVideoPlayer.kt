@@ -23,23 +23,31 @@ import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.unit.*
 import androidx.compose.ui.viewinterop.AndroidView
 import androidx.media3.common.Player
+import androidx.media3.common.TrackSelectionParameters
+import androidx.media3.common.Tracks
 import androidx.media3.common.util.UnstableApi
 import androidx.media3.exoplayer.ExoPlayer
 import androidx.media3.ui.AspectRatioFrameLayout
 import androidx.media3.ui.PlayerView
+import com.profusion.androidenhancedvideoplayer.R
 import com.profusion.androidenhancedvideoplayer.components.playerOverlay.ControlsCustomization
 import com.profusion.androidenhancedvideoplayer.components.playerOverlay.PlayerControls
 import com.profusion.androidenhancedvideoplayer.components.playerOverlay.SeekHandler
 import com.profusion.androidenhancedvideoplayer.components.playerOverlay.Settings
 import com.profusion.androidenhancedvideoplayer.components.playerOverlay.SettingsControlsCustomization
 import com.profusion.androidenhancedvideoplayer.utils.TimeoutEffect
+import com.profusion.androidenhancedvideoplayer.utils.TrackQualityAuto
+import com.profusion.androidenhancedvideoplayer.utils.TrackQualityItem
 import com.profusion.androidenhancedvideoplayer.utils.fillMaxSizeOnLandscape
+import com.profusion.androidenhancedvideoplayer.utils.generateTrackQualityOptions
+import com.profusion.androidenhancedvideoplayer.utils.getSelectedTrackQualityItem
 import com.profusion.androidenhancedvideoplayer.utils.resetActivityBrightnessToDefault
 import com.profusion.androidenhancedvideoplayer.utils.seekIncrement
 import com.profusion.androidenhancedvideoplayer.utils.setLandscape
 import com.profusion.androidenhancedvideoplayer.utils.setNavigationBarVisibility
 import com.profusion.androidenhancedvideoplayer.utils.setPortrait
 import com.profusion.androidenhancedvideoplayer.utils.setStatusBarVisibility
+import com.profusion.androidenhancedvideoplayer.utils.setVideoQuality
 import kotlinx.coroutines.delay
 
 private const val CURRENT_TIME_TICK_IN_MS = 50L
@@ -84,6 +92,13 @@ fun EnhancedVideoPlayer(
 
     val isFullScreen = orientation == Configuration.ORIENTATION_LANDSCAPE
     var isSettingsOpen by rememberSaveable { mutableStateOf(false) }
+    val autoQualityTrack by remember {
+        mutableStateOf(TrackQualityAuto(context.getString(R.string.settings_quality_auto)))
+    }
+    var selectedTrack by remember { mutableStateOf<TrackQualityItem>(autoQualityTrack) }
+    var trackQualityOptions by remember {
+        mutableStateOf(generateTrackQualityOptions(exoPlayer.currentTracks))
+    }
 
     LaunchedEffect(isFullScreen) {
         if (!isFullScreen) {
@@ -115,6 +130,18 @@ fun EnhancedVideoPlayer(
                 totalDuration = player.duration
                 loop = player.repeatMode == ExoPlayer.REPEAT_MODE_ALL
                 super.onEvents(player, events)
+            }
+
+            override fun onTracksChanged(tracks: Tracks) {
+                trackQualityOptions = listOf(autoQualityTrack) + generateTrackQualityOptions(tracks)
+                super.onTracksChanged(tracks)
+            }
+
+            override fun onTrackSelectionParametersChanged(parameters: TrackSelectionParameters) {
+                selectedTrack = parameters.getSelectedTrackQualityItem(
+                    autoLabel = context.getString(R.string.settings_quality_auto)
+                )
+                super.onTrackSelectionParametersChanged(parameters)
             }
         }
         exoPlayer.addListener(listener)
@@ -229,6 +256,15 @@ fun EnhancedVideoPlayer(
                         } else {
                             ExoPlayer.REPEAT_MODE_OFF
                         }
+                    },
+                    selectedQualityTrack = {
+                        selectedTrack
+                    },
+                    qualityTracks = {
+                        trackQualityOptions
+                    },
+                    onQualityChanged = { selectedQualityTrack ->
+                        exoPlayer.setVideoQuality(selectedQualityTrack)
                     },
                     customization = settingsControlsCustomization
                 )

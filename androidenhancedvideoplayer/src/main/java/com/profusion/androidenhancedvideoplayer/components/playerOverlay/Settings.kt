@@ -14,6 +14,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.Stable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.rememberUpdatedState
 import androidx.compose.runtime.saveable.rememberSaveable
@@ -21,16 +22,21 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.res.stringResource
-import androidx.compose.ui.tooling.preview.Preview
 import com.profusion.androidenhancedvideoplayer.R
 import com.profusion.androidenhancedvideoplayer.styling.Dimensions
+import com.profusion.androidenhancedvideoplayer.utils.TrackQualityItem
 import kotlinx.coroutines.launch
+
+// At least we should have two tracks, one for AUTO and another for the
+// actual bitrate quality to be played
+private const val MIN_TRACKS_SIZE = 2
 
 @Stable
 data class SettingsControlsCustomization(
     val speeds: List<Float> = listOf(0.5f, 0.75f, 1.0f, 1.25f, 1.5f),
     val speedIconContent: @Composable () -> Unit = { SpeedIcon() },
     val repeatIconContent: @Composable () -> Unit = { RepeatIcon() },
+    val qualityIconContent: @Composable () -> Unit = { QualityIcon() },
     val modifier: Modifier = Modifier
 )
 
@@ -42,9 +48,15 @@ fun Settings(
     onDismissRequest: () -> Unit,
     onSpeedSelected: (Float) -> Unit,
     onIsLoopEnabledSelected: (Boolean) -> Unit,
+    selectedQualityTrack: () -> TrackQualityItem,
+    qualityTracks: () -> List<TrackQualityItem>,
+    onQualityChanged: (TrackQualityItem) -> Unit,
     customization: SettingsControlsCustomization
 ) {
     val sheetState = rememberModalBottomSheetState(skipPartiallyExpanded = true)
+    val isQualitySelectorVisible = remember(qualityTracks().size) {
+        qualityTracks().size > MIN_TRACKS_SIZE
+    }
 
     ModalBottomSheet(
         onDismissRequest = onDismissRequest,
@@ -58,6 +70,15 @@ fun Settings(
             items = customization.speeds,
             onSelected = onSpeedSelected
         )
+        if (isQualitySelectorVisible) {
+            SettingsSelector(
+                label = stringResource(id = R.string.settings_quality),
+                icon = customization.qualityIconContent,
+                value = selectedQualityTrack(),
+                items = qualityTracks(),
+                onSelected = onQualityChanged
+            )
+        }
         SettingsSelector(
             label = stringResource(id = R.string.settings_repeat),
             icon = customization.repeatIconContent,
@@ -148,19 +169,5 @@ private fun SettingsSelector(
         modifier = modifier
             .clickable(onClick = { currentOnSelected(!value) })
             .testTag("${label}SettingsButton")
-    )
-}
-
-@OptIn(ExperimentalMaterial3Api::class)
-@Preview(showBackground = true)
-@Composable
-private fun PreviewSettings() {
-    Settings(
-        speed = 1.0f,
-        isLoopEnabled = false,
-        onDismissRequest = { },
-        onSpeedSelected = { },
-        onIsLoopEnabledSelected = { },
-        customization = SettingsControlsCustomization()
     )
 }
