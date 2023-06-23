@@ -13,6 +13,8 @@ import androidx.compose.ui.platform.LocalConfiguration
 import androidx.core.view.WindowCompat
 import androidx.media3.common.MediaItem
 import androidx.media3.exoplayer.ExoPlayer
+import androidx.media3.exoplayer.trackselection.AdaptiveTrackSelection
+import androidx.media3.exoplayer.trackselection.DefaultTrackSelector
 import androidx.media3.exoplayer.util.EventLogger
 import com.example.androidenhancedvideoplayer.components.RecommendedVideosComponent
 import com.example.androidenhancedvideoplayer.ui.theme.AndroidEnhancedVideoPlayerTheme
@@ -26,12 +28,16 @@ class MainActivity : ComponentActivity() {
     private lateinit var exoPlayer: ExoPlayer
     private val isInPictureInPictureMode: MutableStateFlow<Boolean> = MutableStateFlow(false)
 
+    @androidx.annotation.OptIn(androidx.media3.common.util.UnstableApi::class)
     private fun initializeExoPlayer() {
         exoPlayer = ExoPlayer
             .Builder(applicationContext)
+            .setTrackSelector(
+                DefaultTrackSelector(applicationContext, AdaptiveTrackSelection.Factory())
+            )
             .build()
             .apply {
-                setMediaItem(MediaItem.fromUri(ExampleUrl.HLS))
+                setMediaItem(MediaItem.fromUri(ExampleUrl.HLS_MULTI_AUDIO))
                 playWhenReady = true
                 addAnalyticsListener(EventLogger())
                 prepare()
