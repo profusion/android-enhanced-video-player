@@ -13,6 +13,7 @@ import androidx.compose.ui.platform.LocalConfiguration
 import androidx.core.view.WindowCompat
 import androidx.media3.common.MediaItem
 import androidx.media3.exoplayer.ExoPlayer
+import androidx.media3.exoplayer.util.EventLogger
 import com.example.androidenhancedvideoplayer.components.RecommendedVideosComponent
 import com.example.androidenhancedvideoplayer.ui.theme.AndroidEnhancedVideoPlayerTheme
 import com.example.androidenhancedvideoplayer.utils.ExampleUrl
@@ -32,6 +33,7 @@ class MainActivity : ComponentActivity() {
             .apply {
                 setMediaItem(MediaItem.fromUri(ExampleUrl.HLS))
                 playWhenReady = true
+                addAnalyticsListener(EventLogger())
                 prepare()
             }
     }
