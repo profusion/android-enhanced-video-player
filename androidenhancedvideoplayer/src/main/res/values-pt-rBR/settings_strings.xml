@@ -2,6 +2,9 @@
     <string name="settings_check_description">Selecionado</string>
     <string name="settings_off">Desativado</string>
     <string name="settings_on">Ativado</string>
+    <string name="settings_quality">Qualidade do vídeo</string>
+    <string name="settings_quality_auto">Auto</string>
+    <string name="settings_quality_description">Qualidade</string>
     <string name="settings_repeat">Repetir vídeo</string>
     <string name="settings_repeat_description">Repetir</string>
     <string name="settings_speed">Velocidade</string>
