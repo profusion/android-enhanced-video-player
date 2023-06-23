@@ -9,6 +9,7 @@
     <string name="controls_pause_description">Pausar</string>
     <string name="controls_play_description">Reproduzir</string>
     <string name="controls_previous_description">Anterior</string>
+    <string name="controls_quality_description">Qualidade</string>
     <string name="controls_replay_description">Repetir</string>
     <string name="controls_rewind_description">Retroceder</string>
     <string name="controls_settings_description">Configurações</string>

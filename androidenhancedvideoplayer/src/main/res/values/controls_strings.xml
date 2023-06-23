@@ -9,6 +9,7 @@
     <string name="controls_pause_description">Pause</string>
     <string name="controls_play_description">Play</string>
     <string name="controls_previous_description">Previous</string>
+    <string name="controls_quality_description">Quality</string>
     <string name="controls_replay_description">Replay</string>
     <string name="controls_rewind_description">Rewind</string>
     <string name="controls_settings_description">Settings</string>
