@@ -90,6 +90,15 @@ fun SettingsIcon() {
 }
 
 @Composable
+fun QualityIcon() {
+    Icon(
+        painter = painterResource(id = R.drawable.ic_quality),
+        tint = MaterialTheme.colorScheme.onPrimaryContainer,
+        contentDescription = stringResource(R.string.controls_quality_description)
+    )
+}
+
+@Composable
 fun SpeedIcon() {
     Icon(
         painter = painterResource(id = R.drawable.ic_speed),
