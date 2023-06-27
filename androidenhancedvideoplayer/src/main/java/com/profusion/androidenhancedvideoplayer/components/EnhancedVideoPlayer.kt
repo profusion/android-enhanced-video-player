@@ -82,6 +82,7 @@ fun EnhancedVideoPlayer(
     var speed by remember { mutableStateOf(exoPlayer.playbackParameters.speed) }
     var loop by remember { mutableStateOf(exoPlayer.repeatMode == ExoPlayer.REPEAT_MODE_ALL) }
     var currentTime by remember { mutableStateOf(exoPlayer.contentPosition) }
+    var bufferedPosition by remember { mutableStateOf(exoPlayer.bufferedPosition) }
     var totalDuration by remember { mutableStateOf(exoPlayer.duration) }
     var title by remember {
         mutableStateOf(exoPlayer.currentMediaItem?.mediaMetadata?.title?.toString())
@@ -178,9 +179,10 @@ fun EnhancedVideoPlayer(
 
     TimeoutEffect(
         timeoutInMs = currentTimeTickInMs,
-        enabled = isPlaying && isControlsVisible
+        enabled = isControlsVisible
     ) {
         currentTime = exoPlayer.currentPosition
+        bufferedPosition = exoPlayer.bufferedPosition
     }
 
     LaunchedEffect(isControlsVisible, isPlaying, isBrightnessSliderDragged) {
@@ -241,6 +243,7 @@ fun EnhancedVideoPlayer(
                     timeBarMutableInteractionSource = timeBarMutableInteractionSource,
                     totalDuration = totalDuration,
                     currentTime = { currentTime },
+                    bufferedPosition = { bufferedPosition },
                     onPreviousClick = exoPlayer::seekToPrevious,
                     onNextClick = exoPlayer::seekToNext,
                     onPauseToggle = when {
