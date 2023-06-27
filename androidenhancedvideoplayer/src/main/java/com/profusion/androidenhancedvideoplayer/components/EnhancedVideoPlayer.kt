@@ -38,6 +38,8 @@ import com.profusion.androidenhancedvideoplayer.components.playerOverlay.Setting
 import com.profusion.androidenhancedvideoplayer.utils.TimeoutEffect
 import com.profusion.androidenhancedvideoplayer.utils.TrackQualityAuto
 import com.profusion.androidenhancedvideoplayer.utils.TrackQualityItem
+import com.profusion.androidenhancedvideoplayer.utils.TrackQualityItemListSaver
+import com.profusion.androidenhancedvideoplayer.utils.TrackQualityItemSaver
 import com.profusion.androidenhancedvideoplayer.utils.fillMaxSizeOnLandscape
 import com.profusion.androidenhancedvideoplayer.utils.generateTrackQualityOptions
 import com.profusion.androidenhancedvideoplayer.utils.getSelectedTrackQualityItem
@@ -92,12 +94,26 @@ fun EnhancedVideoPlayer(
 
     val isFullScreen = orientation == Configuration.ORIENTATION_LANDSCAPE
     var isSettingsOpen by rememberSaveable { mutableStateOf(false) }
-    val autoQualityTrack by remember {
-        mutableStateOf(TrackQualityAuto(context.getString(R.string.settings_quality_auto)))
+
+    val autoQualityTrack by rememberSaveable(
+        stateSaver = TrackQualityItemSaver
+    ) {
+        mutableStateOf(
+            TrackQualityAuto(context.getString(R.string.settings_quality_auto))
+        )
     }
-    var selectedTrack by remember { mutableStateOf<TrackQualityItem>(autoQualityTrack) }
-    var trackQualityOptions by remember {
-        mutableStateOf(generateTrackQualityOptions(exoPlayer.currentTracks))
+    var selectedTrack by remember {
+        mutableStateOf<TrackQualityItem>(autoQualityTrack)
+    }
+    var trackQualityOptions by rememberSaveable(
+        stateSaver = TrackQualityItemListSaver
+    ) {
+        mutableStateOf(
+            generateTrackQualityOptions(
+                exoPlayer.currentTracks,
+                autoQualityTrack
+            )
+        )
     }
 
     LaunchedEffect(isFullScreen) {
@@ -133,13 +149,16 @@ fun EnhancedVideoPlayer(
             }
 
             override fun onTracksChanged(tracks: Tracks) {
-                trackQualityOptions = listOf(autoQualityTrack) + generateTrackQualityOptions(tracks)
+                trackQualityOptions = generateTrackQualityOptions(
+                    tracks = tracks,
+                    autoTrack = autoQualityTrack
+                )
                 super.onTracksChanged(tracks)
             }
 
             override fun onTrackSelectionParametersChanged(parameters: TrackSelectionParameters) {
                 selectedTrack = parameters.getSelectedTrackQualityItem(
-                    autoLabel = context.getString(R.string.settings_quality_auto)
+                    autoTrack = autoQualityTrack
                 )
                 super.onTrackSelectionParametersChanged(parameters)
             }
