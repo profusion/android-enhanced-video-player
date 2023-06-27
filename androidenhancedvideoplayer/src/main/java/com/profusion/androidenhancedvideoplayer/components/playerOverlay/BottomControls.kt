@@ -26,6 +26,7 @@ fun BottomControls(
     shouldShowContent: Boolean = true,
     isFullScreen: Boolean,
     currentTime: () -> Long,
+    bufferedPosition: () -> Long,
     totalDuration: Long,
     onSettingsToggle: () -> Unit,
     onFullScreenToggle: () -> Unit,
@@ -44,6 +45,7 @@ fun BottomControls(
             TimeBarComponent(
                 currentTime = currentTime,
                 duration = totalDuration,
+                bufferedPosition = bufferedPosition,
                 onTimeChange = onSeekBarValueChange,
                 onTimeChangeFinished = onSeekBarValueFinished,
                 interactionSource = timeBarMutableInteractionSource
