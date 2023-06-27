@@ -171,12 +171,6 @@ fun EnhancedVideoPlayer(
         }
     }
 
-    LaunchedEffect(isTimeBarDragged) {
-        if (isTimeBarDragged) {
-            exoPlayer.pause()
-        }
-    }
-
     TimeoutEffect(
         timeoutInMs = currentTimeTickInMs,
         enabled = isControlsVisible
@@ -185,12 +179,13 @@ fun EnhancedVideoPlayer(
         bufferedPosition = exoPlayer.bufferedPosition
     }
 
-    LaunchedEffect(isControlsVisible, isPlaying, isBrightnessSliderDragged) {
+    LaunchedEffect(isControlsVisible, isPlaying, isBrightnessSliderDragged, isTimeBarDragged) {
         if (
             isControlsVisible &&
             isPlaying &&
             controlsVisibilityDurationInMs > 0 &&
-            !isBrightnessSliderDragged
+            !isBrightnessSliderDragged &&
+            !isTimeBarDragged
         ) {
             delay(controlsVisibilityDurationInMs)
             isControlsVisible = false
@@ -258,10 +253,9 @@ fun EnhancedVideoPlayer(
                         }
                     },
                     onSettingsToggle = { isSettingsOpen = !isSettingsOpen },
-                    onSeekBarValueChange = { currentTime = it },
-                    onSeekBarValueFinished = {
-                        exoPlayer.seekTo(currentTime)
-                        exoPlayer.play()
+                    onSeekBarValueFinished = { value ->
+                        currentTime = value
+                        exoPlayer.seekTo(value)
                     },
                     customization = controlsCustomization
                 )
