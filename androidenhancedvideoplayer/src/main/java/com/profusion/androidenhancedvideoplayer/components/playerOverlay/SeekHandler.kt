@@ -95,9 +95,9 @@ fun SeekHandler(
     }
 
     fun onForwardDoubleTap() {
-        if (isRewinding) return
         setControlsVisibility(false)
-        onForwardSingleTap()
+        forwardTapCount = 1
+        rewindTapCount = 0
     }
 
     fun onRewindSingleTap() {
@@ -105,9 +105,9 @@ fun SeekHandler(
     }
 
     fun onRewindDoubleTap() {
-        if (isForwarding) return
         setControlsVisibility(false)
-        onRewindSingleTap()
+        rewindTapCount = 1
+        forwardTapCount = 0
     }
 
     Row(
