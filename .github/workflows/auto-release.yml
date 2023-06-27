@@ -22,5 +22,4 @@ jobs:
         with:
           properties_path: 'gradle.properties'
           property_name: 'VERSION_NAME'
-          tag_prefix: 'v'
           github_token: ${{ secrets.GITHUB_TOKEN }}
