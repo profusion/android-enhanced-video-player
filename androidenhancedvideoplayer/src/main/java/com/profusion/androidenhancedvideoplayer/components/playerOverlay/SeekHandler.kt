@@ -16,14 +16,12 @@ import androidx.compose.runtime.derivedStateOf
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
-import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import com.profusion.androidenhancedvideoplayer.styling.Colors
-import com.profusion.androidenhancedvideoplayer.utils.JobsHolder
-import com.profusion.androidenhancedvideoplayer.utils.executeAfterTimeout
 import com.profusion.androidenhancedvideoplayer.utils.noRippleClickable
+import kotlinx.coroutines.delay
 
 private const val ICON_ANIMATION_DURATION_MS = 650
 private const val ICON_INITIAL_SCALE = 0.8f
@@ -40,8 +38,6 @@ fun SeekHandler(
     transformSeekIncrementRatio: (tapCount: Int) -> Long,
     controlsCustomization: ControlsCustomization
 ) {
-    val jobs = JobsHolder
-    val scope = rememberCoroutineScope()
     var forwardTapCount by remember { mutableStateOf(0) }
     var rewindTapCount by remember { mutableStateOf(0) }
     val isRewinding by remember { derivedStateOf { rewindTapCount > 0 } }
@@ -69,6 +65,9 @@ fun SeekHandler(
                     forwardTapCount - 1
                 )
             seekIncrement(incrementTime)
+
+            delay(JOB_TIMEOUT)
+            forwardTapCount = 0
         }
     }
 
@@ -79,6 +78,9 @@ fun SeekHandler(
                     rewindTapCount - 1
                 )
             seekIncrement(-incrementTime)
+
+            delay(JOB_TIMEOUT)
+            rewindTapCount = 0
         }
     }
 
@@ -89,9 +91,6 @@ fun SeekHandler(
     }
 
     fun onForwardSingleTap() {
-        jobs.seekJob = executeAfterTimeout(scope, jobs.seekJob, JOB_TIMEOUT) {
-            forwardTapCount = 0
-        }
         forwardTapCount++
     }
 
@@ -102,9 +101,6 @@ fun SeekHandler(
     }
 
     fun onRewindSingleTap() {
-        jobs.seekJob = executeAfterTimeout(scope, jobs.seekJob, JOB_TIMEOUT) {
-            rewindTapCount = 0
-        }
         rewindTapCount++
     }
 
