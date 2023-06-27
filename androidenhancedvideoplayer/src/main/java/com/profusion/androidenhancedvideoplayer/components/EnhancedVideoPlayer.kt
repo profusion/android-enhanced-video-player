@@ -35,6 +35,7 @@ import com.profusion.androidenhancedvideoplayer.components.playerOverlay.Setting
 import com.profusion.androidenhancedvideoplayer.utils.TimeoutEffect
 import com.profusion.androidenhancedvideoplayer.utils.fillMaxSizeOnLandscape
 import com.profusion.androidenhancedvideoplayer.utils.resetActivityBrightnessToDefault
+import com.profusion.androidenhancedvideoplayer.utils.seekIncrement
 import com.profusion.androidenhancedvideoplayer.utils.setLandscape
 import com.profusion.androidenhancedvideoplayer.utils.setNavigationBarVisibility
 import com.profusion.androidenhancedvideoplayer.utils.setPortrait
@@ -173,8 +174,8 @@ fun EnhancedVideoPlayer(
         if (!disableControls) {
             Box(modifier = Modifier.matchParentSize()) {
                 SeekHandler(
+                    seekIncrement = exoPlayer::seekIncrement,
                     disableSeekForward = hasEnded,
-                    exoPlayer = exoPlayer,
                     controlsCustomization = controlsCustomization,
                     toggleControlsVisibility = {
                         setControlsVisibility(!isControlsVisible)

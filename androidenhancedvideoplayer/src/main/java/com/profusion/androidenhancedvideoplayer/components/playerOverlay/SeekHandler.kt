@@ -20,7 +20,6 @@ import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
-import androidx.media3.exoplayer.ExoPlayer
 import com.profusion.androidenhancedvideoplayer.styling.Colors
 import com.profusion.androidenhancedvideoplayer.utils.JobsHolder
 import com.profusion.androidenhancedvideoplayer.utils.executeAfterTimeout
@@ -34,8 +33,8 @@ private const val TRANSITION_LABEL = "scaleSeekIcon"
 
 @Composable
 fun SeekHandler(
+    seekIncrement: (Long) -> Unit,
     disableSeekForward: Boolean,
-    exoPlayer: ExoPlayer,
     toggleControlsVisibility: () -> Unit,
     setControlsVisibility: (value: Boolean) -> Unit,
     transformSeekIncrementRatio: (tapCount: Int) -> Long,
@@ -69,8 +68,7 @@ fun SeekHandler(
                 transformSeekIncrementRatio(
                     forwardTapCount - 1
                 )
-            val timeToSeek = exoPlayer.currentPosition + incrementTime
-            exoPlayer.seekTo(timeToSeek)
+            seekIncrement(incrementTime)
         }
     }
 
@@ -80,8 +78,7 @@ fun SeekHandler(
                 transformSeekIncrementRatio(
                     rewindTapCount - 1
                 )
-            val timeToSeek = exoPlayer.currentPosition - incrementTime
-            exoPlayer.seekTo(timeToSeek)
+            seekIncrement(-incrementTime)
         }
     }
 
