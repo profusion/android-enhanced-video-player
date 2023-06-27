@@ -46,8 +46,7 @@ fun PlayerControls(
     onNextClick: () -> Unit,
     onFullScreenToggle: () -> Unit,
     onSettingsToggle: () -> Unit,
-    onSeekBarValueChange: (Long) -> Unit,
-    onSeekBarValueFinished: () -> Unit,
+    onSeekBarValueFinished: (Long) -> Unit,
     customization: ControlsCustomization
 ) {
     PlayerControlsScaffold(
@@ -73,7 +72,6 @@ fun PlayerControls(
                 onFullScreenToggle = onFullScreenToggle,
                 onSettingsToggle = onSettingsToggle,
                 timeBarMutableInteractionSource = timeBarMutableInteractionSource,
-                onSeekBarValueChange = onSeekBarValueChange,
                 onSeekBarValueFinished = onSeekBarValueFinished,
                 customization = customization
             )
@@ -114,7 +112,6 @@ private fun PreviewPlayerControls() {
         onNextClick = {},
         onFullScreenToggle = {},
         onSettingsToggle = {},
-        onSeekBarValueChange = {},
         onSeekBarValueFinished = {},
         customization = ControlsCustomization(),
         timeBarMutableInteractionSource = MutableInteractionSource(),

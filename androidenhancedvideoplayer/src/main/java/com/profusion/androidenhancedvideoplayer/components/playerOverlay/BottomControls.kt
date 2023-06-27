@@ -31,8 +31,7 @@ fun BottomControls(
     onSettingsToggle: () -> Unit,
     onFullScreenToggle: () -> Unit,
     timeBarMutableInteractionSource: MutableInteractionSource,
-    onSeekBarValueChange: (Long) -> Unit,
-    onSeekBarValueFinished: () -> Unit,
+    onSeekBarValueFinished: (Long) -> Unit,
     customization: ControlsCustomization
 ) {
     Column(
@@ -46,7 +45,6 @@ fun BottomControls(
                 currentTime = currentTime,
                 duration = totalDuration,
                 bufferedPosition = bufferedPosition,
-                onTimeChange = onSeekBarValueChange,
                 onTimeChangeFinished = onSeekBarValueFinished,
                 interactionSource = timeBarMutableInteractionSource
             )
