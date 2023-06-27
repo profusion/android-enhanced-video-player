@@ -8,11 +8,15 @@ import androidx.media3.common.TrackSelectionParameters
 import androidx.media3.common.Tracks
 import androidx.media3.common.util.UnstableApi
 import androidx.media3.exoplayer.ExoPlayer
+import com.google.common.collect.ImmutableList
 
 private const val NO_ROLE_FLAGS = 0
 
 @OptIn(UnstableApi::class)
-fun generateTrackQualityOptions(tracks: Tracks): List<TrackQualityItem> {
+fun generateTrackQualityOptions(
+    tracks: Tracks,
+    autoTrack: TrackQualityItem
+): ImmutableList<TrackQualityItem> {
     val qualityOptions = ArrayList<TrackQualityItemValue>()
 
     for (group in tracks.groups) {
@@ -29,7 +33,7 @@ fun generateTrackQualityOptions(tracks: Tracks): List<TrackQualityItem> {
         }
     }
 
-    return qualityOptions.sortedDescending()
+    return ImmutableList.copyOf(listOf(autoTrack) + qualityOptions.sortedDescending())
 }
 
 @UnstableApi
@@ -39,13 +43,13 @@ fun TrackSelectionParameters.getChangedTrackSelection(
 
 @UnstableApi
 fun TrackSelectionParameters.getSelectedTrackQualityItem(
-    autoLabel: String
+    autoTrack: TrackQualityItem
 ): TrackQualityItem {
     val videoTrackOverride = getChangedTrackSelection(C.TRACK_TYPE_VIDEO)
-        ?: return TrackQualityAuto(autoLabel)
+        ?: return autoTrack
 
     val index = videoTrackOverride.trackIndices.single()
-        ?: return TrackQualityAuto(autoLabel)
+        ?: return autoTrack
 
     val group = videoTrackOverride.mediaTrackGroup
 
