@@ -174,7 +174,6 @@ fun EnhancedVideoPlayer(
             Box(modifier = Modifier.matchParentSize()) {
                 SeekHandler(
                     disableSeekForward = hasEnded,
-                    isControlsVisible = isControlsVisible,
                     exoPlayer = exoPlayer,
                     controlsCustomization = controlsCustomization,
                     toggleControlsVisibility = {
