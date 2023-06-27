@@ -7,7 +7,6 @@ import androidx.compose.animation.core.infiniteRepeatable
 import androidx.compose.animation.core.rememberInfiniteTransition
 import androidx.compose.animation.core.tween
 import androidx.compose.foundation.background
-import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
@@ -25,6 +24,7 @@ import androidx.media3.exoplayer.ExoPlayer
 import com.profusion.androidenhancedvideoplayer.styling.Colors
 import com.profusion.androidenhancedvideoplayer.utils.JobsHolder
 import com.profusion.androidenhancedvideoplayer.utils.executeAfterTimeout
+import com.profusion.androidenhancedvideoplayer.utils.noRippleClickable
 
 private const val ICON_ANIMATION_DURATION_MS = 650
 private const val ICON_INITIAL_SCALE = 0.8f
@@ -35,7 +35,6 @@ private const val TRANSITION_LABEL = "scaleSeekIcon"
 @Composable
 fun SeekHandler(
     disableSeekForward: Boolean,
-    isControlsVisible: Boolean,
     exoPlayer: ExoPlayer,
     toggleControlsVisibility: () -> Unit,
     setControlsVisibility: (value: Boolean) -> Unit,
@@ -128,7 +127,9 @@ fun SeekHandler(
                     Color.Transparent
                 }
             )
-            .clickable { setControlsVisibility(!isControlsVisible) }
+            .noRippleClickable(
+                onClick = toggleControlsVisibility
+            )
     ) {
         SeekClickableArea(
             modifier = Modifier.weight(1f),
