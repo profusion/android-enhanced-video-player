@@ -4,6 +4,8 @@ import android.app.Activity
 import android.content.Context
 import android.content.ContextWrapper
 import android.content.pm.ActivityInfo
+import android.graphics.Point
+import android.os.Build
 import android.view.WindowManager
 import android.view.WindowManager.LayoutParams.BRIGHTNESS_OVERRIDE_NONE
 import androidx.core.view.WindowCompat
@@ -12,10 +14,52 @@ import androidx.core.view.WindowInsetsControllerCompat
 
 private const val MED_BRIGHTNESS = 0.5f
 
+fun WindowManager.deviceRealSize(): Pair<Int, Int> {
+    return if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.R) {
+        return Pair(
+            maximumWindowMetrics.bounds.width(),
+            maximumWindowMetrics.bounds.height()
+        )
+    } else {
+        val size = Point()
+        defaultDisplay.getRealSize(size)
+        Pair(size.x, size.y)
+    }
+}
+
 fun Context.findActivity(): Activity? = when (this) {
     is Activity -> this
     is ContextWrapper -> baseContext.findActivity()
     else -> null
+}
+
+fun Context.getTopDisplayCutoutDp(): Int {
+    val window = this.findActivity()?.window
+    var result = 0
+    window?.let {
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.P) {
+            val displayCutout = it.decorView.rootWindowInsets.displayCutout
+            if (displayCutout != null) {
+                val safeInsetTop = displayCutout.safeInsetTop
+                val density = this.resources.displayMetrics.density
+                result = (safeInsetTop / density).toInt()
+            }
+        }
+    }
+
+    return result
+}
+fun Context.getDeviceRealSizeDp(): Pair<Int, Int> {
+    val window = this.findActivity()?.window
+    var result = Pair(0, 0)
+    window?.let {
+        result = it.windowManager.deviceRealSize()
+    }
+    val density = this.resources.displayMetrics.density
+    return result.copy(
+        first = (result.first / density).toInt(),
+        second = (result.second / density).toInt()
+    )
 }
 
 fun Context.setLandscape() {
