@@ -40,6 +40,7 @@ import com.profusion.androidenhancedvideoplayer.utils.TimeoutEffect
 import com.profusion.androidenhancedvideoplayer.utils.TrackQualityAuto
 import com.profusion.androidenhancedvideoplayer.utils.TrackQualityItemListSaver
 import com.profusion.androidenhancedvideoplayer.utils.TrackQualityItemSaver
+import com.profusion.androidenhancedvideoplayer.utils.VolumeController
 import com.profusion.androidenhancedvideoplayer.utils.fillMaxSizeOnLandscape
 import com.profusion.androidenhancedvideoplayer.utils.generateTrackQualityOptions
 import com.profusion.androidenhancedvideoplayer.utils.getDeviceRealSizeDp
@@ -81,9 +82,9 @@ fun EnhancedVideoPlayer(
     settingsControlsCustomization: SettingsControlsCustomization = SettingsControlsCustomization()
 ) {
     val context = LocalContext.current
-
     val configuration = LocalConfiguration.current
     val orientation = configuration.orientation
+    val volumeController = remember { VolumeController(context) }
 
     var isPlaying by remember { mutableStateOf(exoPlayer.isPlaying) }
     var isBuffering by remember {
@@ -104,8 +105,11 @@ fun EnhancedVideoPlayer(
     }
     var currentOffsetXPreview by remember { mutableStateOf(INITIAL_PREVIEW_OFFSET) }
 
+    var deviceVolume by remember { mutableStateOf(volumeController.getDeviceVolume()) }
     val brightnessMutableInteractionSource = remember { MutableInteractionSource() }
     val isBrightnessSliderDragged by brightnessMutableInteractionSource.collectIsDraggedAsState()
+    val volumeMutableInteractionSource = remember { MutableInteractionSource() }
+    val isVolumeSliderDragged by volumeMutableInteractionSource.collectIsDraggedAsState()
     val timeBarMutableInteractionSource = remember { MutableInteractionSource() }
     val isTimeBarDragged by timeBarMutableInteractionSource.collectIsDraggedAsState()
 
@@ -142,6 +146,7 @@ fun EnhancedVideoPlayer(
                 currentTime = player.contentPosition
                 totalDuration = player.duration
                 loop = player.repeatMode == ExoPlayer.REPEAT_MODE_ALL
+                deviceVolume = player.deviceVolume
                 super.onEvents(player, events)
             }
 
@@ -188,13 +193,20 @@ fun EnhancedVideoPlayer(
         }
     }
 
-    LaunchedEffect(isControlsVisible, isPlaying, isBrightnessSliderDragged, isTimeBarDragged) {
+    LaunchedEffect(
+        isControlsVisible,
+        isPlaying,
+        isBrightnessSliderDragged,
+        isVolumeSliderDragged,
+        isTimeBarDragged
+    ) {
         if (
             isControlsVisible &&
             isPlaying &&
             controlsVisibilityDurationInMs > 0 &&
             !isBrightnessSliderDragged &&
-            !isTimeBarDragged
+            !isTimeBarDragged &&
+            !isVolumeSliderDragged
         ) {
             delay(controlsVisibilityDurationInMs)
             isControlsVisible = false
@@ -268,8 +280,10 @@ fun EnhancedVideoPlayer(
                     isFullScreen = isFullScreen,
                     isBrightnessSliderDragged = isBrightnessSliderDragged,
                     isTimeBarDragged = isTimeBarDragged,
+                    isVolumeSliderDragged = isVolumeSliderDragged,
                     hasEnded = hasEnded,
                     brightnessMutableInteractionSource = brightnessMutableInteractionSource,
+                    volumeMutableInteractionSource = volumeMutableInteractionSource,
                     timeBarMutableInteractionSource = timeBarMutableInteractionSource,
                     totalDuration = totalDuration,
                     currentTime = { currentTime },
@@ -298,6 +312,10 @@ fun EnhancedVideoPlayer(
                             currentImagePreview = previewThumbnailBuilder(it)
                         }
                     },
+                    deviceVolume = { deviceVolume },
+                    maxVolumeValue = { volumeController.getMaxVolumeValue() },
+                    setDeviceVolume = { volumeController.setDeviceVolume(it) },
+                    shouldShowVolumeControl = !volumeController.deviceHasVolumeFixedPolicy,
                     customization = controlsCustomization
                 )
             }

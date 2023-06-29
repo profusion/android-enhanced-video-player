@@ -10,11 +10,14 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.testTag
+import com.profusion.androidenhancedvideoplayer.components.playerOverlay.sideControls.BrightnessControl
+import com.profusion.androidenhancedvideoplayer.components.playerOverlay.sideControls.VolumeControl
 
 @Composable
 fun MiddleControls(
     modifier: Modifier = Modifier,
     shouldShowContent: Boolean = true,
+    shouldShowVolumeControl: Boolean,
     isPlaying: Boolean,
     isBuffering: Boolean,
     isFullScreen: Boolean,
@@ -22,19 +25,23 @@ fun MiddleControls(
     hasEnded: Boolean,
     customization: ControlsCustomization,
     brightnessMutableInteractionSource: MutableInteractionSource,
+    volumeMutableInteractionSource: MutableInteractionSource,
     onPreviousClick: () -> Unit,
     onNextClick: () -> Unit,
-    onPauseToggle: () -> Unit
+    onPauseToggle: () -> Unit,
+    deviceVolume: () -> Int,
+    maxVolumeValue: () -> Int,
+    setDeviceVolume: (Int) -> Unit
 ) {
     Box(
         modifier = modifier
             .fillMaxWidth(),
         contentAlignment = Alignment.Center
     ) {
-        if (!isTimeBarDragged) {
+        val shouldShowSideControls = !isTimeBarDragged && isFullScreen
+        if (shouldShowSideControls) {
             BrightnessControl(
                 modifier = Modifier.align(Alignment.CenterStart),
-                isFullScreen = isFullScreen,
                 customization = customization,
                 brightnessMutableInteractionSource = brightnessMutableInteractionSource
             )
@@ -65,6 +72,16 @@ fun MiddleControls(
                     customization.nextIconContent()
                 }
             }
+        }
+        if (shouldShowVolumeControl && shouldShowSideControls) {
+            VolumeControl(
+                modifier = Modifier.align(Alignment.CenterEnd),
+                volume = deviceVolume,
+                maxVolumeValue = maxVolumeValue,
+                setDeviceVolume = setDeviceVolume,
+                customization = customization,
+                volumeMutableInteractionSource = volumeMutableInteractionSource
+            )
         }
     }
 }

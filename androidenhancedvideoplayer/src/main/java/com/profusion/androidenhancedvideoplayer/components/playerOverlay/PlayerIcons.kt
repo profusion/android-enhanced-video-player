@@ -176,3 +176,33 @@ fun BrightnessMedIcon(modifier: Modifier = Modifier) {
         modifier = modifier.testTag("BrightnessMedIcon")
     )
 }
+
+@Composable
+fun VolumeMedIcon() {
+    Icon(
+        painter = painterResource(id = R.drawable.ic_volume_med),
+        tint = Color.White,
+        contentDescription = stringResource(R.string.controls_volume_med),
+        modifier = Modifier.testTag("VolumeMedIcon")
+    )
+}
+
+@Composable
+fun VolumeHighIcon() {
+    Icon(
+        painter = painterResource(id = R.drawable.ic_volume_high),
+        tint = Color.White,
+        contentDescription = stringResource(R.string.controls_volume_high),
+        modifier = Modifier.testTag("VolumeHighIcon")
+    )
+}
+
+@Composable
+fun VolumeOffIcon() {
+    Icon(
+        painter = painterResource(id = R.drawable.ic_volume_off),
+        tint = Color.White,
+        contentDescription = stringResource(R.string.controls_volume_off),
+        modifier = Modifier.testTag("VolumeOffIcon")
+    )
+}
