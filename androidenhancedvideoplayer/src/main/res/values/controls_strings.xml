@@ -1,3 +1,4 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
 <resources>
     <string name="controls_brightness_high_description">High Brightness</string>
     <string name="controls_brightness_low_description">Low Brightness</string>
@@ -14,4 +15,7 @@
     <string name="controls_rewind_description">Rewind</string>
     <string name="controls_settings_description">Settings</string>
     <string name="controls_time_unit">Seconds</string>
+    <string name="controls_volume_high">High Volume</string>
+    <string name="controls_volume_med">Medium Volume</string>
+    <string name="controls_volume_off">Off Volume</string>
 </resources>
