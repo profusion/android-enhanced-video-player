@@ -6,7 +6,6 @@ import androidx.activity.compose.setContent
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.safeDrawingPadding
 import androidx.compose.runtime.collectAsState
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.ImageBitmap
@@ -20,7 +19,8 @@ import androidx.media3.exoplayer.util.EventLogger
 import com.example.androidenhancedvideoplayer.components.RecommendedVideosComponent
 import com.example.androidenhancedvideoplayer.ui.theme.AndroidEnhancedVideoPlayerTheme
 import com.example.androidenhancedvideoplayer.utils.ExampleUrl
-import com.example.androidenhancedvideoplayer.utils.fillMaxSizeOnLandscape
+import com.example.androidenhancedvideoplayer.utils.fillMaxSizeInLandscape
+import com.example.androidenhancedvideoplayer.utils.safePaddingInPortrait
 import com.profusion.androidenhancedvideoplayer.components.EnhancedVideoPlayer
 import com.profusion.androidenhancedvideoplayer.components.playerOverlay.SettingsControlsCustomization
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -58,23 +58,21 @@ class MainActivity : ComponentActivity() {
         setContent {
             AndroidEnhancedVideoPlayerTheme {
                 val orientation = LocalConfiguration.current.orientation
-
                 val isInPictureInPictureModeState = isInPictureInPictureMode.collectAsState()
 
                 Column(
                     modifier = Modifier
                         .fillMaxWidth()
-                        .safeDrawingPadding()
+                        .safePaddingInPortrait(orientation)
                 ) {
                     Box(
                         modifier = Modifier
-                            .fillMaxSizeOnLandscape(orientation = orientation)
+                            .fillMaxSizeInLandscape(orientation = orientation)
                             .fillMaxWidth()
                     ) {
                         EnhancedVideoPlayer(
                             exoPlayer = exoPlayer,
                             zoomToFit = false,
-                            enableImmersiveMode = true,
                             disableControls = isInPictureInPictureModeState.value,
                             settingsControlsCustomization = SettingsControlsCustomization(
                                 speeds = listOf(0.5f, 1f, 2f, 4f)

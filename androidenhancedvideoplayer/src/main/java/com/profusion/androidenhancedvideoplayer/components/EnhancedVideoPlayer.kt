@@ -49,9 +49,8 @@ import com.profusion.androidenhancedvideoplayer.utils.mapLongToIntRange
 import com.profusion.androidenhancedvideoplayer.utils.resetActivityBrightnessToDefault
 import com.profusion.androidenhancedvideoplayer.utils.seekIncrement
 import com.profusion.androidenhancedvideoplayer.utils.setLandscape
-import com.profusion.androidenhancedvideoplayer.utils.setNavigationBarVisibility
 import com.profusion.androidenhancedvideoplayer.utils.setPortrait
-import com.profusion.androidenhancedvideoplayer.utils.setStatusBarVisibility
+import com.profusion.androidenhancedvideoplayer.utils.setSystemBarVisibility
 import com.profusion.androidenhancedvideoplayer.utils.setVideoQuality
 import kotlinx.coroutines.delay
 
@@ -185,8 +184,7 @@ fun EnhancedVideoPlayer(
     LaunchedEffect(enableImmersiveMode, isFullScreen) {
         if (enableImmersiveMode) {
             val shouldShowSystemUi = !isFullScreen
-            context.setStatusBarVisibility(shouldShowSystemUi)
-            context.setNavigationBarVisibility(shouldShowSystemUi)
+            context.setSystemBarVisibility(shouldShowSystemUi)
         }
     }
 

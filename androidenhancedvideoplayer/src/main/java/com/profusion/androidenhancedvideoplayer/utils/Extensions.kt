@@ -69,34 +69,25 @@ fun Context.setLandscape() {
 
 fun Context.setPortrait() {
     val activity = this.findActivity()
-    activity?.requestedOrientation = ActivityInfo.SCREEN_ORIENTATION_PORTRAIT
+    activity?.requestedOrientation = ActivityInfo.SCREEN_ORIENTATION_UNSPECIFIED
 }
 
-fun Context.setStatusBarVisibility(showStatusBar: Boolean) {
+fun Context.setSystemBarVisibility(showSystemBars: Boolean) {
     val window = this.findActivity()?.window
     window?.let {
         val windowInsetsController = WindowCompat.getInsetsController(it, it.decorView)
-        if (showStatusBar) {
-            windowInsetsController.show(WindowInsetsCompat.Type.statusBars())
+        if (showSystemBars) {
+            windowInsetsController.show(WindowInsetsCompat.Type.systemBars())
+            windowInsetsController.systemBarsBehavior =
+                WindowInsetsControllerCompat.BEHAVIOR_DEFAULT
         } else {
-            windowInsetsController.hide(WindowInsetsCompat.Type.statusBars())
+            windowInsetsController.hide(WindowInsetsCompat.Type.systemBars())
+            windowInsetsController.systemBarsBehavior =
+                WindowInsetsControllerCompat.BEHAVIOR_SHOW_TRANSIENT_BARS_BY_SWIPE
         }
     }
 }
 
-fun Context.setNavigationBarVisibility(showNavigationBar: Boolean) {
-    val window = this.findActivity()?.window
-    window?.let {
-        val windowInsetsController = WindowCompat.getInsetsController(it, it.decorView)
-        windowInsetsController.systemBarsBehavior = WindowInsetsControllerCompat.BEHAVIOR_DEFAULT
-
-        if (showNavigationBar) {
-            windowInsetsController.show(WindowInsetsCompat.Type.navigationBars())
-        } else {
-            windowInsetsController.hide(WindowInsetsCompat.Type.navigationBars())
-        }
-    }
-}
 fun Context.setActivityBrightness(brightness: Float) {
     val window = this.findActivity()?.window
 
