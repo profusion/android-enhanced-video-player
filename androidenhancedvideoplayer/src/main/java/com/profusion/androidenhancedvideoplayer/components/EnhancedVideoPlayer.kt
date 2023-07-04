@@ -38,7 +38,6 @@ import com.profusion.androidenhancedvideoplayer.components.playerOverlay.Setting
 import com.profusion.androidenhancedvideoplayer.components.playerOverlay.TimeBarPreviewComponent
 import com.profusion.androidenhancedvideoplayer.utils.TimeoutEffect
 import com.profusion.androidenhancedvideoplayer.utils.TrackQualityAuto
-import com.profusion.androidenhancedvideoplayer.utils.TrackQualityItem
 import com.profusion.androidenhancedvideoplayer.utils.TrackQualityItemListSaver
 import com.profusion.androidenhancedvideoplayer.utils.TrackQualityItemSaver
 import com.profusion.androidenhancedvideoplayer.utils.fillMaxSizeOnLandscape
@@ -105,7 +104,6 @@ fun EnhancedVideoPlayer(
         mutableStateOf(ImageBitmap(DEFAULT_THUMBNAIL_WIDTH, DEFAULT_THUMBNAIL_HEIGHT))
     }
     var currentOffsetXPreview by remember { mutableStateOf(INITIAL_PREVIEW_OFFSET) }
-    var topDisplayCutout by rememberSaveable { mutableStateOf(context.getTopDisplayCutoutDp()) }
 
     val brightnessMutableInteractionSource = remember { MutableInteractionSource() }
     val isBrightnessSliderDragged by brightnessMutableInteractionSource.collectIsDraggedAsState()
@@ -122,9 +120,7 @@ fun EnhancedVideoPlayer(
             TrackQualityAuto(context.getString(R.string.settings_quality_auto))
         )
     }
-    var selectedTrack by remember {
-        mutableStateOf<TrackQualityItem>(autoQualityTrack)
-    }
+    var selectedTrack by remember { mutableStateOf(autoQualityTrack) }
     var trackQualityOptions by rememberSaveable(
         stateSaver = TrackQualityItemListSaver
     ) {
@@ -209,6 +205,7 @@ fun EnhancedVideoPlayer(
 
     fun getPreviewOffsetX(draggedTime: Long): Int {
         val halfImage = currentImagePreview.width / 2
+        val topDisplayCutout = context.getTopDisplayCutoutDp()
         val cutout = if (isFullScreen) topDisplayCutout else 0
         val screenWidth = context.getDeviceRealSizeDp().first
         val maxOffsetX = screenWidth - currentImagePreview.width - cutout
