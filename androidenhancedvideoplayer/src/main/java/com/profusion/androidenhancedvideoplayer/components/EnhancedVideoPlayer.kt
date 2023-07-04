@@ -136,20 +136,6 @@ fun EnhancedVideoPlayer(
         )
     }
 
-    LaunchedEffect(isFullScreen) {
-        if (!isFullScreen) {
-            context.resetActivityBrightnessToDefault()
-        }
-    }
-
-    LaunchedEffect(enableImmersiveMode, isFullScreen) {
-        if (enableImmersiveMode) {
-            val shouldShowSystemUi = !isFullScreen
-            context.setStatusBarVisibility(shouldShowSystemUi)
-            context.setNavigationBarVisibility(shouldShowSystemUi)
-        }
-    }
-
     DisposableEffect(context) {
         val listener = object : Player.Listener {
             override fun onEvents(player: Player, events: Player.Events) {
