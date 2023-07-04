@@ -2,7 +2,10 @@ package com.profusion.androidenhancedvideoplayer.components.playerOverlay
 
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.ExperimentalLayoutApi
+import androidx.compose.foundation.layout.WindowInsets
 import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.systemBarsIgnoringVisibility
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.material3.ExperimentalMaterial3Api
@@ -88,7 +91,7 @@ fun Settings(
     }
 }
 
-@OptIn(ExperimentalMaterial3Api::class)
+@OptIn(ExperimentalMaterial3Api::class, ExperimentalLayoutApi::class)
 @Composable
 private fun <T>SettingsSelector(
     label: String,
@@ -115,6 +118,7 @@ private fun <T>SettingsSelector(
         ModalBottomSheet(
             onDismissRequest = { isSelectorOpen = false },
             sheetState = sheetState,
+            windowInsets = WindowInsets.systemBarsIgnoringVisibility,
             modifier = Modifier.testTag("${label}SettingsSelector")
         ) {
             LazyColumn {
