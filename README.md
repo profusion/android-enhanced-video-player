@@ -7,13 +7,13 @@ Enhanced Video Player for Android built on top of Exoplayer compliant with Andro
 
 ## Table of Contents
 
-  - [Table of Contents](#table-of-contents)
-  - [Installation](#installation)
-  - [Media Types](#media-types)
-    - [HLS](#hls)
-    - [DASH](#dash)
-    - [MSS/SmoothStreaming](#msssmoothstreaming)
-  - [Documentation](#documentation)
+- [Table of Contents](#table-of-contents)
+- [Installation](#installation)
+- [Media Types](#media-types)
+  - [HLS](#hls)
+  - [DASH](#dash)
+  - [MSS/SmoothStreaming](#msssmoothstreaming)
+- [Documentation](#documentation)
 
 ## Installation
 
@@ -106,4 +106,5 @@ EnhancedVideoPlayer(mediaItem = mediaItem)
 ## Documentation
 
 - [Contributing](docs/CONTRIBUTING.md)
+- [Integrating with React Native](docs/react-native.md)
 - [Releasing](docs/RELEASING.md)
