@@ -8,8 +8,8 @@
   },
   "scripts": {
     "test": "./gradlew test",
-    "lint": "./gradlew ktlintCheck",
-    "lint-fix": "./gradlew ktlintFormat",
+    "lint": "./gradlew lintKotlin",
+    "lint-fix": "./gradlew formatKotlin",
     "pre-push": "run-p lint test",
     "prepare": "husky install"
   },

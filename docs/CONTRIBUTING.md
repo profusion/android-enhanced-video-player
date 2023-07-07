@@ -40,12 +40,10 @@ $ yarn install
 This will install husky pre-commit, pre-push and msg-commit hooks.
 
 ### Install Ktlint to IDE
-Make sure to open this project with Android Studio at least once before proceeding with ktlint instalation. That guarantees some hidden files/folders (like `.idea`) exist and can be configured by the following command. Navigate to the project’s directory in the terminal and execute:
-```console
-ktlint applyToIDEAProject
-```
 
-This will change Android Studio's code format configurations. The next time you apply an automatic code formatting on a kotlin file, it will use our new set of rules defined by ktlint.
+To ensure code quality, the project utilizes [kotlinter](https://github.com/jeremymailen/kotlinter-gradle) for linting. The linting process is automatically triggered through commit and push hooks. However, you can also perform manual linting by running the commands `yarn lint` and `yarn lint-fix`.
+
+For a seamless integration with Android Studio and to conveniently view and fix linting errors within the IDE, we highly recommend installing the [ktlint-intellij-plugin](https://plugins.jetbrains.com/plugin/15057-ktlint-unofficial-). This plugin allows you to directly display and handle linting errors from within Android Studio.
 
 **Pro Tip:** use a hotkey to make Android Studio format your file for you. You can choose your hotkey on `File > Settings > Keymap > Main Menu > Code > Reformat Code & Reformat File`
 
