@@ -1,7 +1,7 @@
 package com.profusion.androidenhancedvideoplayer.utils
 
-import androidx.media3.exoplayer.ExoPlayer
+import androidx.media3.common.Player
 
-fun ExoPlayer.seekIncrement(incrementMs: Long) {
+fun Player.seekIncrement(incrementMs: Long) {
     seekTo(currentPosition + incrementMs)
 }

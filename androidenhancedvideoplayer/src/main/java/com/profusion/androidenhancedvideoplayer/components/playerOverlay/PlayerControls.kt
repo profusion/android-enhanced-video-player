@@ -33,6 +33,7 @@ data class ControlsCustomization(
 fun PlayerControls(
     modifier: Modifier = Modifier,
     title: String? = null,
+    disableCast: Boolean = false,
     isVisible: Boolean,
     isPlaying: Boolean,
     isBuffering: Boolean,
@@ -70,6 +71,7 @@ fun PlayerControls(
             TopControls(
                 modifier = it,
                 title = title,
+                disableCast = disableCast,
                 shouldShowContent = shouldShowContent
             )
         },

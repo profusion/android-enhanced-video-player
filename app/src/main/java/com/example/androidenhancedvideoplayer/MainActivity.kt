@@ -1,8 +1,8 @@
 package com.example.androidenhancedvideoplayer
 
 import android.os.Bundle
-import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
+import androidx.annotation.OptIn
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -11,7 +11,10 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.ImageBitmap
 import androidx.compose.ui.platform.LocalConfiguration
 import androidx.core.view.WindowCompat
+import androidx.fragment.app.FragmentActivity
 import androidx.media3.common.MediaItem
+import androidx.media3.common.MimeTypes
+import androidx.media3.common.util.UnstableApi
 import androidx.media3.exoplayer.ExoPlayer
 import androidx.media3.exoplayer.trackselection.AdaptiveTrackSelection
 import androidx.media3.exoplayer.trackselection.DefaultTrackSelector
@@ -21,15 +24,16 @@ import com.example.androidenhancedvideoplayer.ui.theme.AndroidEnhancedVideoPlaye
 import com.example.androidenhancedvideoplayer.utils.ExampleUrl
 import com.example.androidenhancedvideoplayer.utils.fillMaxSizeInLandscape
 import com.example.androidenhancedvideoplayer.utils.safePaddingInPortrait
+import com.google.android.gms.cast.framework.CastContext
 import com.profusion.androidenhancedvideoplayer.components.EnhancedVideoPlayer
 import com.profusion.androidenhancedvideoplayer.components.playerOverlay.SettingsControlsCustomization
 import kotlinx.coroutines.flow.MutableStateFlow
 
-class MainActivity : ComponentActivity() {
+class MainActivity : FragmentActivity() {
     private lateinit var exoPlayer: ExoPlayer
     private val isInPictureInPictureMode: MutableStateFlow<Boolean> = MutableStateFlow(false)
 
-    @androidx.annotation.OptIn(androidx.media3.common.util.UnstableApi::class)
+    @OptIn(androidx.media3.common.util.UnstableApi::class)
     private fun initializeExoPlayer() {
         exoPlayer = ExoPlayer
             .Builder(applicationContext)
@@ -38,7 +42,7 @@ class MainActivity : ComponentActivity() {
             )
             .build()
             .apply {
-                setMediaItem(MediaItem.fromUri(ExampleUrl.HLS_MULTI_AUDIO))
+                setMediaItem(MediaItem.Builder().setUri(ExampleUrl.DASH).setMimeType(MimeTypes.APPLICATION_MPD).build())
                 playWhenReady = true
                 addAnalyticsListener(EventLogger())
                 prepare()
@@ -54,6 +58,7 @@ class MainActivity : ComponentActivity() {
         WindowCompat.setDecorFitsSystemWindows(window, false)
         super.onCreate(savedInstanceState)
         initializeExoPlayer()
+        CastContext.getSharedInstance(this)
 
         setContent {
             AndroidEnhancedVideoPlayerTheme {

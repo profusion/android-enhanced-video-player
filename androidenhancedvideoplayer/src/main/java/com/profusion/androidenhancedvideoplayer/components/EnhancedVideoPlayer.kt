@@ -10,9 +10,7 @@ import androidx.compose.foundation.layout.*
 import androidx.compose.material.*
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.runtime.*
-import androidx.compose.runtime.getValue
 import androidx.compose.runtime.saveable.rememberSaveable
-import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.*
@@ -22,6 +20,11 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.unit.*
 import androidx.compose.ui.viewinterop.AndroidView
+import androidx.media3.cast.CastPlayer
+import androidx.media3.cast.SessionAvailabilityListener
+import androidx.media3.common.BasePlayer
+import androidx.media3.common.C
+import androidx.media3.common.MediaItem
 import androidx.media3.common.Player
 import androidx.media3.common.TrackSelectionParameters
 import androidx.media3.common.Tracks
@@ -29,6 +32,7 @@ import androidx.media3.common.util.UnstableApi
 import androidx.media3.exoplayer.ExoPlayer
 import androidx.media3.ui.AspectRatioFrameLayout
 import androidx.media3.ui.PlayerView
+import com.google.android.gms.cast.framework.CastContext
 import com.profusion.androidenhancedvideoplayer.R
 import com.profusion.androidenhancedvideoplayer.components.playerOverlay.ControlsCustomization
 import com.profusion.androidenhancedvideoplayer.components.playerOverlay.PlayerControls
@@ -74,6 +78,7 @@ fun EnhancedVideoPlayer(
     zoomToFit: Boolean = true,
     enableImmersiveMode: Boolean = true,
     disableControls: Boolean = false,
+    disableCast: Boolean = false,
     currentTimeTickInMs: Long = CURRENT_TIME_TICK_IN_MS,
     controlsVisibilityDurationInMs: Long = PLAYER_CONTROLS_VISIBILITY_DURATION_IN_MS,
     controlsCustomization: ControlsCustomization = ControlsCustomization(),
@@ -86,19 +91,25 @@ fun EnhancedVideoPlayer(
     val orientation = configuration.orientation
     val volumeController = remember { VolumeController(context) }
 
-    var isPlaying by remember { mutableStateOf(exoPlayer.isPlaying) }
+    val castContext = CastContext.getSharedInstance()
+    val castPlayer = castContext?.let { CastPlayer(it) }
+    val mediaItems: List<MediaItem> = listOfNotNull(exoPlayer.currentMediaItem)
+    var currentPlayer: Player by remember { mutableStateOf(exoPlayer) }
+    var isCasting by remember { mutableStateOf(false) }
+
+    var isPlaying by remember { mutableStateOf(currentPlayer.isPlaying) }
     var isBuffering by remember {
-        mutableStateOf(exoPlayer.playbackState == ExoPlayer.STATE_BUFFERING)
+        mutableStateOf(currentPlayer.playbackState == BasePlayer.STATE_BUFFERING)
     }
-    var hasEnded by remember { mutableStateOf(exoPlayer.playbackState == ExoPlayer.STATE_ENDED) }
+    var hasEnded by remember { mutableStateOf(currentPlayer.playbackState == BasePlayer.STATE_ENDED) }
     var isControlsVisible by remember { mutableStateOf(false) }
-    var speed by remember { mutableStateOf(exoPlayer.playbackParameters.speed) }
-    var loop by remember { mutableStateOf(exoPlayer.repeatMode == ExoPlayer.REPEAT_MODE_ALL) }
-    var currentTime by remember { mutableStateOf(exoPlayer.contentPosition) }
-    var bufferedPosition by remember { mutableStateOf(exoPlayer.bufferedPosition) }
-    var totalDuration by remember { mutableStateOf(exoPlayer.duration) }
+    var speed by remember { mutableStateOf(currentPlayer.playbackParameters.speed) }
+    var loop by remember { mutableStateOf(currentPlayer.repeatMode == BasePlayer.REPEAT_MODE_ALL) }
+    var currentTime by remember { mutableStateOf(currentPlayer.contentPosition) }
+    var bufferedPosition by remember { mutableStateOf(currentPlayer.bufferedPosition) }
+    var totalDuration by remember { mutableStateOf(currentPlayer.duration) }
     var title by remember {
-        mutableStateOf(exoPlayer.currentMediaItem?.mediaMetadata?.title?.toString())
+        mutableStateOf(currentPlayer.currentMediaItem?.mediaMetadata?.title?.toString())
     }
     var currentImagePreview by remember {
         mutableStateOf(ImageBitmap(DEFAULT_THUMBNAIL_WIDTH, DEFAULT_THUMBNAIL_HEIGHT))
@@ -129,23 +140,47 @@ fun EnhancedVideoPlayer(
     ) {
         mutableStateOf(
             generateTrackQualityOptions(
-                exoPlayer.currentTracks,
+                currentPlayer.currentTracks,
                 autoQualityTrack
             )
         )
     }
 
+    fun setPlayer(newPlayer: Player) {
+        if (castContext != null && !disableCast && currentPlayer !== newPlayer) {
+            var mediaIndex = C.INDEX_UNSET
+            var playbackPositionMs = C.TIME_UNSET
+            var playWhenReady = false
+            val previousPlayer = currentPlayer
+
+            val playbackState = previousPlayer.playbackState
+            if (playbackState != Player.STATE_ENDED) {
+                mediaIndex = previousPlayer.currentMediaItemIndex
+                playbackPositionMs = previousPlayer.currentPosition
+                playWhenReady = previousPlayer.playWhenReady
+
+                previousPlayer.stop()
+            }
+
+            newPlayer.setMediaItems(mediaItems, mediaIndex, playbackPositionMs)
+            newPlayer.playWhenReady = playWhenReady
+            newPlayer.prepare()
+
+            currentPlayer = newPlayer
+        }
+    }
+
     DisposableEffect(context) {
-        val listener = object : Player.Listener {
+        val listener = object : Player.Listener, SessionAvailabilityListener {
             override fun onEvents(player: Player, events: Player.Events) {
                 isPlaying = player.isPlaying
-                isBuffering = player.playbackState == ExoPlayer.STATE_BUFFERING
-                hasEnded = player.playbackState == ExoPlayer.STATE_ENDED
+                isBuffering = player.playbackState == BasePlayer.STATE_BUFFERING
+                hasEnded = player.playbackState == BasePlayer.STATE_ENDED
                 speed = player.playbackParameters.speed
                 title = player.mediaMetadata.title?.toString()
                 currentTime = player.contentPosition
                 totalDuration = player.duration
-                loop = player.repeatMode == ExoPlayer.REPEAT_MODE_ALL
+                loop = player.repeatMode == BasePlayer.REPEAT_MODE_ALL
                 deviceVolume = player.deviceVolume
                 super.onEvents(player, events)
             }
@@ -164,11 +199,26 @@ fun EnhancedVideoPlayer(
                 )
                 super.onTrackSelectionParametersChanged(parameters)
             }
+
+            override fun onCastSessionAvailable() {
+                setPlayer(castPlayer ?: exoPlayer)
+                isCasting = true
+                isControlsVisible = true
+            }
+
+            override fun onCastSessionUnavailable() {
+                setPlayer(exoPlayer)
+                isCasting = false
+            }
         }
         exoPlayer.addListener(listener)
+        castPlayer?.addListener(listener)
+        castPlayer?.setSessionAvailabilityListener(listener)
 
         onDispose {
             exoPlayer.removeListener(listener)
+            castPlayer?.removeListener(listener)
+            castPlayer?.setSessionAvailabilityListener(null)
         }
     }
 
@@ -176,8 +226,8 @@ fun EnhancedVideoPlayer(
         timeoutInMs = currentTimeTickInMs,
         enabled = isControlsVisible
     ) {
-        currentTime = exoPlayer.currentPosition
-        bufferedPosition = exoPlayer.bufferedPosition
+        currentTime = currentPlayer.currentPosition
+        bufferedPosition = currentPlayer.bufferedPosition
     }
 
     LaunchedEffect(isFullScreen) {
@@ -198,7 +248,8 @@ fun EnhancedVideoPlayer(
         isPlaying,
         isBrightnessSliderDragged,
         isVolumeSliderDragged,
-        isTimeBarDragged
+        isTimeBarDragged,
+        isCasting
     ) {
         if (
             isControlsVisible &&
@@ -206,7 +257,8 @@ fun EnhancedVideoPlayer(
             controlsVisibilityDurationInMs > 0 &&
             !isBrightnessSliderDragged &&
             !isTimeBarDragged &&
-            !isVolumeSliderDragged
+            !isVolumeSliderDragged &&
+            !isCasting
         ) {
             delay(controlsVisibilityDurationInMs)
             isControlsVisible = false
@@ -258,22 +310,25 @@ fun EnhancedVideoPlayer(
                 } else {
                     AspectRatioFrameLayout.RESIZE_MODE_FIT
                 }
+                playerView.player = currentPlayer
             }
         )
         if (!disableControls) {
             Box(modifier = Modifier.matchParentSize()) {
                 SeekHandler(
-                    seekIncrement = exoPlayer::seekIncrement,
+                    seekIncrement = currentPlayer::seekIncrement,
                     disableSeekForward = hasEnded,
+                    isCasting = isCasting,
                     controlsCustomization = controlsCustomization,
                     toggleControlsVisibility = {
-                        setControlsVisibility(!isControlsVisible)
+                        setControlsVisibility(!isControlsVisible || isCasting)
                     },
                     setControlsVisibility = ::setControlsVisibility,
                     transformSeekIncrementRatio = transformSeekIncrementRatio
                 )
                 PlayerControls(
                     title = title,
+                    disableCast = disableCast,
                     isVisible = isControlsVisible,
                     isPlaying = isPlaying,
                     isBuffering = isBuffering,
@@ -285,15 +340,15 @@ fun EnhancedVideoPlayer(
                     brightnessMutableInteractionSource = brightnessMutableInteractionSource,
                     volumeMutableInteractionSource = volumeMutableInteractionSource,
                     timeBarMutableInteractionSource = timeBarMutableInteractionSource,
-                    totalDuration = totalDuration,
+                    totalDuration = if (totalDuration > 0) totalDuration else 0,
                     currentTime = { currentTime },
                     bufferedPosition = { bufferedPosition },
-                    onPreviousClick = exoPlayer::seekToPrevious,
-                    onNextClick = exoPlayer::seekToNext,
+                    onPreviousClick = currentPlayer::seekToPrevious,
+                    onNextClick = currentPlayer::seekToNext,
                     onPauseToggle = when {
-                        hasEnded -> exoPlayer::seekToDefaultPosition
-                        isPlaying -> exoPlayer::pause
-                        else -> exoPlayer::play
+                        hasEnded -> currentPlayer::seekToDefaultPosition
+                        isPlaying -> currentPlayer::pause
+                        else -> currentPlayer::play
                     },
                     onFullScreenToggle = {
                         when (isFullScreen) {
@@ -304,7 +359,7 @@ fun EnhancedVideoPlayer(
                     onSettingsToggle = { isSettingsOpen = !isSettingsOpen },
                     onSeekBarValueFinished = { value ->
                         currentTime = value
-                        exoPlayer.seekTo(value)
+                        currentPlayer.seekTo(value)
                     },
                     onSeekBarValueChange = {
                         if (previewThumbnailBuilder != null) {
@@ -324,12 +379,12 @@ fun EnhancedVideoPlayer(
                     onDismissRequest = { isSettingsOpen = false },
                     speed = speed,
                     isLoopEnabled = loop,
-                    onSpeedSelected = exoPlayer::setPlaybackSpeed,
+                    onSpeedSelected = currentPlayer::setPlaybackSpeed,
                     onIsLoopEnabledSelected = { value ->
-                        exoPlayer.repeatMode = if (value) {
-                            ExoPlayer.REPEAT_MODE_ALL
+                        currentPlayer.repeatMode = if (value) {
+                            BasePlayer.REPEAT_MODE_ALL
                         } else {
-                            ExoPlayer.REPEAT_MODE_OFF
+                            BasePlayer.REPEAT_MODE_OFF
                         }
                     },
                     selectedQualityTrack = {
@@ -339,7 +394,7 @@ fun EnhancedVideoPlayer(
                         trackQualityOptions
                     },
                     onQualityChanged = { selectedQualityTrack ->
-                        exoPlayer.setVideoQuality(selectedQualityTrack)
+                        currentPlayer.setVideoQuality(selectedQualityTrack)
                     },
                     customization = settingsControlsCustomization
                 )

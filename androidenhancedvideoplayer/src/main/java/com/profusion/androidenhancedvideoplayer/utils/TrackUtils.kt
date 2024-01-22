@@ -3,11 +3,11 @@ package com.profusion.androidenhancedvideoplayer.utils
 import androidx.annotation.OptIn
 import androidx.media3.common.C
 import androidx.media3.common.Format
+import androidx.media3.common.Player
 import androidx.media3.common.TrackSelectionOverride
 import androidx.media3.common.TrackSelectionParameters
 import androidx.media3.common.Tracks
 import androidx.media3.common.util.UnstableApi
-import androidx.media3.exoplayer.ExoPlayer
 import com.google.common.collect.ImmutableList
 
 private const val NO_ROLE_FLAGS = 0
@@ -59,7 +59,7 @@ fun TrackSelectionParameters.getSelectedTrackQualityItem(
     )
 }
 
-fun ExoPlayer.setVideoQuality(track: TrackQualityItem) {
+fun Player.setVideoQuality(track: TrackQualityItem) {
     trackSelectionParameters = when (track) {
         is TrackQualityAuto -> {
             trackSelectionParameters

@@ -33,6 +33,7 @@ private const val TRANSITION_LABEL = "scaleSeekIcon"
 fun SeekHandler(
     seekIncrement: (Long) -> Unit,
     disableSeekForward: Boolean,
+    isCasting: Boolean = false,
     toggleControlsVisibility: () -> Unit,
     setControlsVisibility: (value: Boolean) -> Unit,
     transformSeekIncrementRatio: (tapCount: Int) -> Long,
@@ -68,6 +69,9 @@ fun SeekHandler(
 
             delay(JOB_TIMEOUT)
             forwardTapCount = 0
+            if (isCasting) {
+                setControlsVisibility(true)
+            }
         }
     }
 
@@ -81,6 +85,9 @@ fun SeekHandler(
 
             delay(JOB_TIMEOUT)
             rewindTapCount = 0
+            if (isCasting) {
+                setControlsVisibility(true)
+            }
         }
     }
 
